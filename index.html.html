@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>जमीन रिकॉर्ड प्रबंधन फॉर्म</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+        section {
+            border: 1px solid #e0e0e0;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        h2 {
+            color: #764ba2;
+            margin-top: 0;
+            font-size: 1.2em;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+        .required {
+            color: #e74c3c;
+        }
+        button[type="submit"] {
+            width: 100%;
+            background: linear-gradient(to right, #28a745, #20c997);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+        }
+        button[type="submit"]:hover {
+            background: linear-gradient(to right, #218838, #1ea085);
+        }
+        button[type="submit"]:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        .checkmark {
+            font-size: 60px;
+            color: #28a745;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .modal h2 {
+            color: #28a745;
+            margin: 10px 0;
+        }
+        .modal p {
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .modal button {
+            background: #667eea;
+            color: white;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            transition: background 0.3s ease;
+        }
+        .modal button:hover {
+            background: #5a6fd8;
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+            section {
+                padding: 15px;
+            }
+            .modal-content {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>जमीन रिकॉर्ड प्रबंधन फॉर्म</h1>
+        <form id="landForm">
+            <section id="section1">
+                <h2>1. रैयत की जानकारी</h2>
+                <label for="raiyat">रैयत का नाम:</label>
+                <select id="raiyat" name="raiyat">
+                    <option value="">लोड हो रहा है...</option>
+                </select>
+            </section>
+            <section id="section2">
+                <h2>2. जमीन का विवरण</h2>
+                <label for="jamabandi">जमाबंदी नंबर:</label>
+                <input type="number" id="jamabandi" name="jamabandi">
+                <label for="khata">खाता नंबर:</label>
+                <input type="number" id="khata" name="khata">
+                <label for="khesra">खेसरा नंबर: <span class="required">*</span></label>
+                <input type="number" id="khesra" name="khesra" required>
+                <label for="rakwa">रकवा (दिस्मिल में):</label>
+                <input type="number" step="0.01" id="rakwa" name="rakwa">
+            </section>
+            <section id="section3">
+                <h2>3. चौहद्दी विवरण</h2>
+                <label for="north">उत्तर:</label>
+                <input type="text" id="north" name="north">
+                <label for="south">दक्षिण:</label>
+                <input type="text" id="south" name="south">
+                <label for="east">पूर्व:</label>
+                <input type="text" id="east" name="east">
+                <label for="west">पश्चिम:</label>
+                <input type="text" id="west" name="west">
+            </section>
+            <section id="section4">
+                <h2>4. अतिरिक्त जानकारी</h2>
+                <label for="remarks">रिमार्क्स:</label>
+                <textarea id="remarks" name="remarks" rows="4"></textarea>
+            </section>
+            <button type="submit" id="submitBtn">जमा करें</button>
+        </form>
+    </div>
+    <div id="loading" class="loading">जमा हो रहा है...</div>
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="checkmark">✓</span>
+            <h2>सफलता!</h2>
+            <p>आपका रिकॉर्ड सफलतापूर्वक जमा हो गया है।</p>
+            <button id="okBtn">ठीक है</button>
+        </div>
+    </div>
+    <script>
+        const URL = 'https://script.google.com/macros/s/AKfycbyQ85-3jLI-vjx8LtbW_MxAo_Yx-nSkCKlPjdi_OhaGvS_PrmTnxB79F4TgHNJq-5APUA/exec';
+
+        // रैयत नाम लोड करने का फंक्शन
+        async function loadRaiyatNames() {
+            const select = document.getElementById('raiyat');
+            select.innerHTML = '<option value="">लोड हो रहा है...</option>';
+            try {
+                const response = await fetch(`${URL}?mode=getRaiyat`, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                if (!response.ok) throw new Error('लोडिंग में त्रुटि');
+                const data = await response.json();
+                select.innerHTML = '<option value="">चुनें...</option>';
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.name;
+                    option.textContent = item.name;
+                    select.appendChild(option);
+                });
+                console.log('रैयत नाम सफलतापूर्वक लोड हो गए:', data);
+            } catch (error) {
+                console.error('रैयत नाम लोड करने में त्रुटि:', error);
+                // फॉलबैक डेटा (लोकल टेस्ट के लिए)
+                const fallbackOptions = [
+                    { name: 'राम लाल' },
+                    { name: 'श्याम लाल' },
+                    { name: 'सीता देवी' },
+                    { name: 'गोविंद प्रसाद' }
+                ];
+                select.innerHTML = '<option value="">चुनें...</option>';
+                fallbackOptions.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.name;
+                    option.textContent = item.name;
+                    select.appendChild(option);
+                });
+                alert('रैयत नाम लोड करने में त्रुटि। फॉलबैक डेटा का उपयोग किया जा रहा है। (GitHub Pages पर होस्ट करें तो ठीक हो जाएगा।)');
+            }
+        }
+
+        // पेज लोड होने पर नाम लोड करें
+        document.addEventListener('DOMContentLoaded', loadRaiyatNames);
+
+        // फॉर्म सबमिशन हैंडलर
+        document.getElementById('landForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const khesra = document.getElementById('khesra').value.trim();
+            if (!khesra) {
+                alert('खेसरा नंबर अनिवार्य है। कृपया भरें।');
+                return;
+            }
+            const formData = {
+                raiyatName: document.getElementById('raiyat').value || '',
+                jamabandi: document.getElementById('jamabandi').value || '',
+                khata: document.getElementById('khata').value || '',
+                khesra: khesra,
+                rakwa: document.getElementById('rakwa').value || '',
+                north: document.getElementById('north').value || '',
+                south: document.getElementById('south').value || '',
+                east: document.getElementById('east').value || '',
+                west: document.getElementById('west').value || '',
+                remarks: document.getElementById('remarks').value || ''
+            };
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            try {
+                const response = await fetch(URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                if (!response.ok) throw new Error('सर्वर त्रुटि');
+                const result = await response.json();
+                if (result.success) {
+                    document.getElementById('successModal').style.display = 'flex';
+                } else {
+                    alert('जमा करने में त्रुटि: ' + (result.message || 'अज्ञात त्रुटि'));
+                }
+            } catch (error) {
+                console.error('नेटवर्क त्रुटि:', error);
+                alert('नेटवर्क त्रुटि: कनेक्शन की जाँच करें। (होस्टिंग चेक करें।)');
+            } finally {
+                loading.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // सफलता मॉडल OK बटन
+        document.getElementById('okBtn').addEventListener('click', () => {
+            document.getElementById('successModal').style.display = 'none';
+            document.getElementById('landForm').reset();
+            loadRaiyatNames(); // नाम दोबारा लोड करें
+        });
+    </script>
+</body>
+</html>
