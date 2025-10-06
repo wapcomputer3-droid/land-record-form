@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>भू-अभिलेख फॉर्म</title>
+    <title>भू-अभिलेख फॉर्म - Local Storage</title>
     <style>
         * {
             box-sizing: border-box;
@@ -19,7 +19,7 @@
         }
         
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
             background-color: white;
             padding: 30px;
@@ -34,6 +34,36 @@
             border-bottom: 3px solid #3498db;
             padding-bottom: 15px;
             font-size: 28px;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .nav-tab {
+            padding: 12px 25px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            margin-right: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .nav-tab.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
         }
         
         .form-section {
@@ -51,11 +81,6 @@
             font-weight: 600;
             display: flex;
             align-items: center;
-        }
-        
-        .section-title i {
-            margin-right: 10px;
-            color: #3498db;
         }
         
         .form-row {
@@ -115,11 +140,12 @@
         .btn-group {
             display: flex;
             justify-content: center;
+            gap: 15px;
             margin-top: 30px;
         }
         
         button {
-            padding: 14px 35px;
+            padding: 12px 25px;
             border: none;
             border-radius: 8px;
             font-size: 16px;
@@ -129,7 +155,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-width: 200px;
         }
         
         .submit-btn {
@@ -137,23 +162,102 @@
             color: white;
         }
         
-        .submit-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
-        }
-        
-        .ok-btn {
+        .export-btn {
             background: linear-gradient(135deg, #3498db, #2980b9);
             color: white;
+        }
+        
+        .delete-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .admin-controls {
+            background: #e8f4fc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .admin-form input {
+            flex: 1;
+        }
+        
+        .raiyat-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .raiyat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .raiyat-item:last-child {
+            border-bottom: none;
+        }
+        
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 20px;
         }
         
-        .ok-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        .records-table th,
+        .records-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
         }
         
-        /* Popup Styles */
+        .records-table th {
+            background: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .records-table tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .status-message {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
         .popup-overlay {
             display: none;
             position: fixed;
@@ -175,18 +279,6 @@
             max-width: 400px;
             width: 90%;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            animation: popupAppear 0.5s ease-out;
-        }
-        
-        @keyframes popupAppear {
-            from {
-                opacity: 0;
-                transform: scale(0.8) translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
         }
         
         .popup-icon {
@@ -208,20 +300,6 @@
             line-height: 1.5;
         }
         
-        .form-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .instructions {
-            background: #e8f4fc;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            border-left: 4px solid #3498db;
-        }
-        
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -231,16 +309,19 @@
                 flex: 1 0 100%;
             }
             
+            .btn-group {
+                flex-direction: column;
+            }
+            
             button {
                 width: 100%;
             }
             
-            h1 {
-                font-size: 24px;
+            .admin-form {
+                flex-direction: column;
             }
         }
         
-        /* Custom icons */
         .icon {
             display: inline-block;
             width: 20px;
@@ -251,106 +332,169 @@
 </head>
 <body>
     <div class="container">
-        <div class="form-header">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('form')">
+                <span class="icon">📝</span> फॉर्म
+            </button>
+            <button class="nav-tab" onclick="switchTab('records')">
+                <span class="icon">📊</span> रिकॉर्ड्स
+            </button>
+            <button class="nav-tab" onclick="switchTab('admin')">
+                <span class="icon">⚙️</span> एडमिन
+            </button>
+        </div>
+
+        <!-- फॉर्म टैब -->
+        <div id="form-tab" class="tab-content active">
             <h1>🌾 भू-अभिलेख फॉर्म</h1>
-            <p style="color: #666; margin-top: -10px;">जमीन का रिकॉर्ड दर्ज करें</p>
-        </div>
-        
-        <div class="instructions">
-            <strong>निर्देश:</strong> केवल खेसरा नंबर आवश्यक है (*)। कृपया सही और पूरी जानकारी दर्ज करें।
-        </div>
-        
-        <form id="landRecordForm">
-            <!-- रैयत की जानकारी -->
-            <div class="form-section">
-                <div class="section-title">
-                    <span class="icon">👤</span> रैयत की जानकारी
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="raiyatName">1. रैयत का नाम</label>
-                        <select id="raiyatName">
-                            <option value="">-- चुनें --</option>
-                        </select>
-                    </div>
-                </div>
+            
+            <div class="instructions">
+                <strong>निर्देश:</strong> केवल खेसरा नंबर आवश्यक है (*)। कृपया सही और पूरी जानकारी दर्ज करें।
             </div>
             
-            <!-- जमीन का विवरण -->
-            <div class="form-section">
-                <div class="section-title">
-                    <span class="icon">📄</span> जमीन का विवरण
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="jamabandiNumber">2. जमाबंदी नंबर</label>
-                        <input type="number" id="jamabandiNumber" placeholder="जमाबंदी नंबर दर्ज करें">
+            <form id="landRecordForm">
+                <div class="form-section">
+                    <div class="section-title">
+                        <span class="icon">👤</span> रैयत की जानकारी
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="khataNumber">3. खाता नंबर</label>
-                        <input type="number" id="khataNumber" placeholder="खाता नंबर दर्ज करें">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="raiyatName">1. रैयत का नाम</label>
+                            <select id="raiyatName">
+                                <option value="">-- चुनें --</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="khesraNumber" class="required">4. खेसरा नंबर</label>
-                        <input type="number" id="khesraNumber" placeholder="खेसरा नंबर दर्ज करें" required>
+                <div class="form-section">
+                    <div class="section-title">
+                        <span class="icon">📄</span> जमीन का विवरण
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="jamabandiNumber">2. जमाबंदी नंबर</label>
+                            <input type="number" id="jamabandiNumber" placeholder="जमाबंदी नंबर दर्ज करें">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="khataNumber">3. खाता नंबर</label>
+                            <input type="number" id="khataNumber" placeholder="खाता नंबर दर्ज करें">
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="rakwa">5. रकवा (डिसमिल में)</label>
-                        <input type="number" id="rakwa" step="0.01" placeholder="रकवा दर्ज करें">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="khesraNumber" class="required">4. खेसरा नंबर</label>
+                            <input type="number" id="khesraNumber" placeholder="खेसरा नंबर दर्ज करें" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="rakwa">5. रकवा (डिसमिल में)</label>
+                            <input type="number" id="rakwa" step="0.01" placeholder="रकवा दर्ज करें">
+                        </div>
                     </div>
                 </div>
-            </div>
+                
+                <div class="form-section">
+                    <div class="section-title">
+                        <span class="icon">🗺️</span> चौहद्दी विवरण
+                    </div>
+                    <div class="chauhaddi-row">
+                        <div class="chauhaddi-item">
+                            <label for="uttar">6. उत्तर</label>
+                            <input type="text" id="uttar" placeholder="उत्तर दिशा">
+                        </div>
+                        <div class="chauhaddi-item">
+                            <label for="dakshin">7. दक्षिण</label>
+                            <input type="text" id="dakshin" placeholder="दक्षिण दिशा">
+                        </div>
+                        <div class="chauhaddi-item">
+                            <label for="purab">8. पूर्व</label>
+                            <input type="text" id="purab" placeholder="पूर्व दिशा">
+                        </div>
+                        <div class="chauhaddi-item">
+                            <label for="paschim">9. पश्चिम</label>
+                            <input type="text" id="paschim" placeholder="पश्चिम दिशा">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <div class="section-title">
+                        <span class="icon">📝</span> अतिरिक्त जानकारी
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1 0 100%;">
+                            <label for="remarks">10. रिमार्क्स</label>
+                            <textarea id="remarks" rows="3" placeholder="अन्य टिप्पणियाँ दर्ज करें"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button type="submit" class="submit-btn">
+                        <span class="icon">✅</span> सबमिट करें
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- रिकॉर्ड्स टैब -->
+        <div id="records-tab" class="tab-content">
+            <h1>📊 सभी रिकॉर्ड्स</h1>
             
-            <!-- चौहद्दी विवरण -->
-            <div class="form-section">
-                <div class="section-title">
-                    <span class="icon">🗺️</span> चौहद्दी विवरण
-                </div>
-                <div class="chauhaddi-row">
-                    <div class="chauhaddi-item">
-                        <label for="uttar">6. उत्तर</label>
-                        <input type="text" id="uttar" placeholder="उत्तर दिशा">
-                    </div>
-                    <div class="chauhaddi-item">
-                        <label for="dakshin">7. दक्षिण</label>
-                        <input type="text" id="dakshin" placeholder="दक्षिण दिशा">
-                    </div>
-                    <div class="chauhaddi-item">
-                        <label for="purab">8. पूर्व</label>
-                        <input type="text" id="purab" placeholder="पूर्व दिशा">
-                    </div>
-                    <div class="chauhaddi-item">
-                        <label for="paschim">9. पश्चिम</label>
-                        <input type="text" id="paschim" placeholder="पश्चिम दिशा">
-                    </div>
-                </div>
-            </div>
-            
-            <!-- अतिरिक्त जानकारी -->
-            <div class="form-section">
-                <div class="section-title">
-                    <span class="icon">📝</span> अतिरिक्त जानकारी
-                </div>
-                <div class="form-row">
-                    <div class="form-group" style="flex: 1 0 100%;">
-                        <label for="remarks">10. रिमार्क्स</label>
-                        <textarea id="remarks" rows="3" placeholder="अन्य टिप्पणियाँ दर्ज करें"></textarea>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- सबमिट बटन -->
             <div class="btn-group">
-                <button type="submit" class="submit-btn">
-                    <span class="icon">✅</span> सबमिट करें
+                <button class="export-btn" onclick="exportToExcel()">
+                    <span class="icon">📥</span> Excel में Export करें
+                </button>
+                <button class="delete-btn" onclick="clearAllRecords()">
+                    <span class="icon">🗑️</span> सभी रिकॉर्ड्स डिलीट करें
                 </button>
             </div>
-        </form>
+            
+            <div id="recordsContainer"></div>
+        </div>
+
+        <!-- एडमिन टैब -->
+        <div id="admin-tab" class="tab-content">
+            <h1>⚙️ एडमिन पैनल</h1>
+            
+            <div class="admin-controls">
+                <div class="section-title">
+                    <span class="icon">👥</span> रैयत नाम प्रबंधन
+                </div>
+                
+                <div class="admin-form">
+                    <input type="text" id="newRaiyatName" placeholder="नया रैयत नाम दर्ज करें">
+                    <button class="submit-btn" onclick="addRaiyatName()">
+                        <span class="icon">➕</span> जोड़ें
+                    </button>
+                </div>
+                
+                <div class="raiyat-list" id="raiyatList">
+                    <!-- रैयत नामों की लिस्ट यहाँ लोड होगी -->
+                </div>
+            </div>
+            
+            <div class="admin-controls">
+                <div class="section-title">
+                    <span class="icon">💾</span> डेटा प्रबंधन
+                </div>
+                
+                <div class="btn-group">
+                    <button class="export-btn" onclick="backupData()">
+                        <span class="icon">💾</span> डेटा बैकअप लें
+                    </button>
+                    <button class="submit-btn" onclick="restoreData()">
+                        <span class="icon">🔄</span> डेटा रीस्टोर करें
+                    </button>
+                    <input type="file" id="restoreFile" accept=".json" style="display: none;" onchange="handleFileUpload(this.files[0])">
+                </div>
+            </div>
+        </div>
+
+        <div id="statusMessage" class="status-message"></div>
     </div>
 
     <!-- सफलता पॉपअप -->
@@ -362,160 +506,346 @@
                 आपका फॉर्म सफलतापूर्वक सबमिट हो गया है।<br>
                 धन्यवाद!
             </div>
-            <button class="ok-btn" onclick="closePopupAndReset()">
+            <button class="submit-btn" onclick="closePopupAndReset()">
                 <span class="icon">👍</span> ठीक है
             </button>
         </div>
     </div>
 
     <script>
-        // नया Google Apps Script Web App URL
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw6yrQ3g6E7aSwvuw_W1gUnbZ6fWc0RUMGjzOjPUA8d8ho7sh_BvcD-PvOhwv2ySzgicA/exec';
-        
-        // पेज लोड होने पर रैयत के नाम लोड करें
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('फॉर्म लोड हो रहा है...');
-            loadRaiyatNames();
-        });
-        
-        // Google Sheets से रैयत के नाम लोड करें
-        async function loadRaiyatNames() {
-            try {
-                console.log('Google Sheets से रैयत नाम लोड हो रहे हैं...');
-                
-                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getRaiyatNames`);
-                
-                if (!response.ok) {
-                    throw new Error(`Network error: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                console.log('रैयत नाम प्राप्त:', data);
-                
-                const raiyatSelect = document.getElementById('raiyatName');
-                raiyatSelect.innerHTML = '<option value="">-- चुनें --</option>';
-                
-                if (data && data.length > 0) {
-                    data.forEach(raiyat => {
-                        const option = document.createElement('option');
-                        option.value = raiyat.id;
-                        option.textContent = raiyat.name;
-                        raiyatSelect.appendChild(option);
-                    });
-                    console.log('रैयत नाम सफलतापूर्वक लोड हो गए');
-                } else {
-                    throw new Error('कोई रैयत नाम नहीं मिले');
-                }
-                
-            } catch (error) {
-                console.error('रैयत नाम लोड करने में त्रुटि:', error);
-                
-                // Fallback data अगर Google Sheets से नहीं लोड हो पाए
-                const fallbackNames = [
-                    {id: '1', name: 'राम कुमार'},
-                    {id: '2', name: 'सुरेश यादव'},
-                    {id: '3', name: 'अनीता देवी'},
-                    {id: '4', name: 'मोहन लाल'},
-                    {id: '5', name: 'गीता सिंह'},
-                    {id: '6', name: 'राजेश कुमार'},
-                    {id: '7', name: 'सुनीता देवी'},
-                    {id: '8', name: 'अजय सिंह'}
+        // Local Storage Keys
+        const STORAGE_KEYS = {
+            RAIYAT_NAMES: 'bhoo_abhilekh_raiyat_names',
+            LAND_RECORDS: 'bhoo_abhilekh_land_records'
+        };
+
+        // Initialize data
+        function initializeData() {
+            // Default raiyat names
+            if (!localStorage.getItem(STORAGE_KEYS.RAIYAT_NAMES)) {
+                const defaultRaiyatNames = [
+                    { id: '1', name: 'राम कुमार' },
+                    { id: '2', name: 'सुरेश यादव' },
+                    { id: '3', name: 'अनीता देवी' },
+                    { id: '4', name: 'मोहन लाल' },
+                    { id: '5', name: 'गीता सिंह' }
                 ];
-                
-                const raiyatSelect = document.getElementById('raiyatName');
-                
-                fallbackNames.forEach(raiyat => {
-                    const option = document.createElement('option');
-                    option.value = raiyat.id;
-                    option.textContent = raiyat.name;
-                    raiyatSelect.appendChild(option);
-                });
-                
-                console.log('डेमो डेटा लोड किया गया');
+                localStorage.setItem(STORAGE_KEYS.RAIYAT_NAMES, JSON.stringify(defaultRaiyatNames));
             }
+
+            // Initialize land records if not exists
+            if (!localStorage.getItem(STORAGE_KEYS.LAND_RECORDS)) {
+                localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify([]));
+            }
+
+            loadRaiyatNames();
+            loadRecordsTable();
         }
-        
-        // फॉर्म सबमिशन को हैंडल करें
-        document.getElementById('landRecordForm').addEventListener('submit', async function(e) {
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Load raiyat names in dropdown
+        function loadRaiyatNames() {
+            const raiyatNames = JSON.parse(localStorage.getItem(STORAGE_KEYS.RAIYAT_NAMES) || '[]');
+            const raiyatSelect = document.getElementById('raiyatName');
+            const raiyatList = document.getElementById('raiyatList');
+            
+            // Update dropdown
+            raiyatSelect.innerHTML = '<option value="">-- चुनें --</option>';
+            raiyatNames.forEach(raiyat => {
+                const option = document.createElement('option');
+                option.value = raiyat.id;
+                option.textContent = raiyat.name;
+                raiyatSelect.appendChild(option);
+            });
+
+            // Update admin list
+            raiyatList.innerHTML = '';
+            raiyatNames.forEach(raiyat => {
+                const div = document.createElement('div');
+                div.className = 'raiyat-item';
+                div.innerHTML = `
+                    <span>${raiyat.name}</span>
+                    <button class="delete-btn" onclick="deleteRaiyatName('${raiyat.id}')">
+                        <span class="icon">🗑️</span> डिलीट
+                    </button>
+                `;
+                raiyatList.appendChild(div);
+            });
+        }
+
+        // Add new raiyat name
+        function addRaiyatName() {
+            const nameInput = document.getElementById('newRaiyatName');
+            const name = nameInput.value.trim();
+
+            if (!name) {
+                showStatus('कृपया रैयत नाम दर्ज करें', 'error');
+                return;
+            }
+
+            const raiyatNames = JSON.parse(localStorage.getItem(STORAGE_KEYS.RAIYAT_NAMES) || '[]');
+            const newId = Date.now().toString();
+            
+            raiyatNames.push({ id: newId, name: name });
+            localStorage.setItem(STORAGE_KEYS.RAIYAT_NAMES, JSON.stringify(raiyatNames));
+            
+            nameInput.value = '';
+            loadRaiyatNames();
+            showStatus('रैयत नाम सफलतापूर्वक जोड़ा गया', 'success');
+        }
+
+        // Delete raiyat name
+        function deleteRaiyatName(id) {
+            const raiyatNames = JSON.parse(localStorage.getItem(STORAGE_KEYS.RAIYAT_NAMES) || '[]');
+            const updatedNames = raiyatNames.filter(raiyat => raiyat.id !== id);
+            
+            localStorage.setItem(STORAGE_KEYS.RAIYAT_NAMES, JSON.stringify(updatedNames));
+            loadRaiyatNames();
+            showStatus('रैयत नाम डिलीट किया गया', 'success');
+        }
+
+        // Form submission
+        document.getElementById('landRecordForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const submitBtn = this.querySelector('.submit-btn');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<span class="icon">⏳</span> सबमिट हो रहा है...';
-            submitBtn.disabled = true;
-            
-            try {
-                // फॉर्म वैलिडेशन - केवल खेसरा नंबर चेक करें
-                const khesraNumber = document.getElementById('khesraNumber').value.trim();
-                if (!khesraNumber) {
-                    throw new Error('कृपया खेसरा नंबर दर्ज करें');
-                }
-                
-                // सभी फ़ील्ड्स collect करें
-                const selectedRaiyat = document.getElementById('raiyatName');
-                const formData = {
-                    raiyatId: selectedRaiyat.value,
-                    raiyatName: selectedRaiyat.options[selectedRaiyat.selectedIndex]?.text || '',
-                    jamabandiNumber: document.getElementById('jamabandiNumber').value,
-                    khataNumber: document.getElementById('khataNumber').value,
-                    khesraNumber: khesraNumber,
-                    rakwa: document.getElementById('rakwa').value,
-                    uttar: document.getElementById('uttar').value,
-                    dakshin: document.getElementById('dakshin').value,
-                    purab: document.getElementById('purab').value,
-                    paschim: document.getElementById('paschim').value,
-                    remarks: document.getElementById('remarks').value
-                };
-                
-                console.log('फॉर्म डेटा:', formData);
-                
-                // Google Sheets में डेटा सबमिट करें
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                const result = await response.json();
-                console.log('रिस्पॉन्स:', result);
-                
-                if (result.success) {
-                    showSuccessPopup();
-                } else {
-                    throw new Error(result.error || 'सबमिशन में त्रुटि हुई');
-                }
-                
-            } catch (error) {
-                console.error('त्रुटि:', error);
-                alert('❌ त्रुटि: ' + error.message);
-            } finally {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
+            const khesraNumber = document.getElementById('khesraNumber').value.trim();
+            if (!khesraNumber) {
+                showStatus('कृपया खेसरा नंबर दर्ज करें', 'error');
+                return;
             }
+
+            const selectedRaiyat = document.getElementById('raiyatName');
+            const record = {
+                id: Date.now().toString(),
+                timestamp: new Date().toLocaleString('hi-IN'),
+                raiyatId: selectedRaiyat.value,
+                raiyatName: selectedRaiyat.options[selectedRaiyat.selectedIndex]?.text || '',
+                jamabandiNumber: document.getElementById('jamabandiNumber').value,
+                khataNumber: document.getElementById('khataNumber').value,
+                khesraNumber: khesraNumber,
+                rakwa: document.getElementById('rakwa').value,
+                uttar: document.getElementById('uttar').value,
+                dakshin: document.getElementById('dakshin').value,
+                purab: document.getElementById('purab').value,
+                paschim: document.getElementById('paschim').value,
+                remarks: document.getElementById('remarks').value
+            };
+
+            // Save to local storage
+            const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]');
+            records.push(record);
+            localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify(records));
+
+            showSuccessPopup();
+            showStatus('रिकॉर्ड सफलतापूर्वक सेव हो गया', 'success');
         });
-        
-        // सफलता पॉपअप दिखाएं
-        function showSuccessPopup() {
-            const popup = document.getElementById('successPopup');
-            popup.style.display = 'flex';
+
+        // Load records table
+        function loadRecordsTable() {
+            const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]');
+            const container = document.getElementById('recordsContainer');
+
+            if (records.length === 0) {
+                container.innerHTML = '<p style="text-align: center; padding: 20px;">कोई रिकॉर्ड नहीं मिला</p>';
+                return;
+            }
+
+            let tableHTML = `
+                <table class="records-table">
+                    <thead>
+                        <tr>
+                            <th>क्र.</th>
+                            <th>तारीख</th>
+                            <th>रैयत नाम</th>
+                            <th>खेसरा नंबर</th>
+                            <th>जमाबंदी नंबर</th>
+                            <th>खाता नंबर</th>
+                            <th>रकवा</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            records.forEach((record, index) => {
+                tableHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${record.timestamp}</td>
+                        <td>${record.raiyatName}</td>
+                        <td>${record.khesraNumber}</td>
+                        <td>${record.jamabandiNumber || '-'}</td>
+                        <td>${record.khataNumber || '-'}</td>
+                        <td>${record.rakwa || '-'}</td>
+                        <td>
+                            <button class="delete-btn" onclick="deleteRecord('${record.id}')">
+                                <span class="icon">🗑️</span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += '</tbody></table>';
+            container.innerHTML = tableHTML;
         }
-        
-        // पॉपअप बंद करें और फॉर्म रीसेट करें
-        function closePopupAndReset() {
-            const popup = document.getElementById('successPopup');
-            popup.style.display = 'none';
+
+        // Delete individual record
+        function deleteRecord(id) {
+            if (confirm('क्या आप वाकई इस रिकॉर्ड को डिलीट करना चाहते हैं?')) {
+                const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]');
+                const updatedRecords = records.filter(record => record.id !== id);
+                
+                localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify(updatedRecords));
+                loadRecordsTable();
+                showStatus('रिकॉर्ड डिलीट किया गया', 'success');
+            }
+        }
+
+        // Clear all records
+        function clearAllRecords() {
+            if (confirm('क्या आप वाकई सभी रिकॉर्ड्स डिलीट करना चाहते हैं? यह एक्शन undo नहीं हो सकता।')) {
+                localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify([]));
+                loadRecordsTable();
+                showStatus('सभी रिकॉर्ड्स डिलीट किए गए', 'success');
+            }
+        }
+
+        // Export to Excel
+        function exportToExcel() {
+            const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]');
             
-            // फॉर्म रीसेट करें
+            if (records.length === 0) {
+                showStatus('एक्सपोर्ट करने के लिए कोई डेटा नहीं है', 'error');
+                return;
+            }
+
+            // Create CSV content
+            let csvContent = "तारीख,रैयत नाम,जमाबंदी नंबर,खाता नंबर,खेसरा नंबर,रकवा,उत्तर,दक्षिण,पूर्व,पश्चिम,रिमार्क्स\n";
+            
+            records.forEach(record => {
+                const row = [
+                    `"${record.timestamp}"`,
+                    `"${record.raiyatName}"`,
+                    `"${record.jamabandiNumber || ''}"`,
+                    `"${record.khataNumber || ''}"`,
+                    `"${record.khesraNumber}"`,
+                    `"${record.rakwa || ''}"`,
+                    `"${record.uttar || ''}"`,
+                    `"${record.dakshin || ''}"`,
+                    `"${record.purab || ''}"`,
+                    `"${record.paschim || ''}"`,
+                    `"${record.remarks || ''}"`
+                ].join(',');
+                csvContent += row + '\n';
+            });
+
+            // Create and download file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `भू-अभिलेख_रिकॉर्ड्स_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showStatus('डेटा Excel में एक्सपोर्ट हो गया', 'success');
+        }
+
+        // Backup data
+        function backupData() {
+            const data = {
+                raiyatNames: JSON.parse(localStorage.getItem(STORAGE_KEYS.RAIYAT_NAMES) || '[]'),
+                landRecords: JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]')
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `भू-अभिलेख_बैकअप_${new Date().toISOString().split('T')[0]}.json`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showStatus('डेटा बैकअप सफलतापूर्वक लिया गया', 'success');
+        }
+
+        // Restore data
+        function restoreData() {
+            document.getElementById('restoreFile').click();
+        }
+
+        function handleFileUpload(file) {
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (data.raiyatNames && data.landRecords) {
+                        localStorage.setItem(STORAGE_KEYS.RAIYAT_NAMES, JSON.stringify(data.raiyatNames));
+                        localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify(data.landRecords));
+                        
+                        loadRaiyatNames();
+                        loadRecordsTable();
+                        showStatus('डेटा सफलतापूर्वक रीस्टोर हो गया', 'success');
+                    } else {
+                        showStatus('अमान्य बैकअप फाइल', 'error');
+                    }
+                } catch (error) {
+                    showStatus('फाइल पढ़ने में त्रुटि', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Utility functions
+        function showStatus(message, type) {
+            const statusElement = document.getElementById('statusMessage');
+            statusElement.textContent = message;
+            statusElement.className = `status-message ${type}`;
+            statusElement.style.display = 'block';
+            
+            setTimeout(() => {
+                statusElement.style.display = 'none';
+            }, 3000);
+        }
+
+        function showSuccessPopup() {
+            document.getElementById('successPopup').style.display = 'flex';
+        }
+
+        function closePopupAndReset() {
+            document.getElementById('successPopup').style.display = 'none';
             document.getElementById('landRecordForm').reset();
         }
-        
-        // पॉपअप के बाहर क्लिक करने पर बंद करें
-        document.getElementById('successPopup').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closePopupAndReset();
-            }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeData();
         });
     </script>
 </body>
