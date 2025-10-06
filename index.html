@@ -219,7 +219,7 @@
     <script>
         const URL = 'https://script.google.com/macros/s/AKfycbyQ85-3jLI-vjx8LtbW_MxAo_Yx-nSkCKlPjdi_OhaGvS_PrmTnxB79F4TgHNJq-5APUA/exec';
 
-        // रैयत नाम लोड करने का फंक्शन
+        // रैयत नाम लोड करने का फंक्शन (GET)
         async function loadRaiyatNames() {
             const select = document.getElementById('raiyat');
             select.innerHTML = '<option value="">लोड हो रहा है...</option>';
@@ -240,7 +240,7 @@
                 console.log('रैयत नाम सफलतापूर्वक लोड हो गए:', data);
             } catch (error) {
                 console.error('रैयत नाम लोड करने में त्रुटि:', error);
-                // फॉलबैक डेटा (लोकल टेस्ट के लिए)
+                // फॉलबैक डेटा
                 const fallbackOptions = [
                     { name: 'राम लाल' },
                     { name: 'श्याम लाल' },
@@ -254,14 +254,13 @@
                     option.textContent = item.name;
                     select.appendChild(option);
                 });
-                alert('रैयत नाम लोड करने में त्रुटि। फॉलबैक डेटा का उपयोग किया जा रहा है। (GitHub Pages पर होस्ट करें तो ठीक हो जाएगा।)');
+                alert('रैयत नाम लोड करने में त्रुटि। फॉलबैक डेटा का उपयोग किया जा रहा है।');
             }
         }
 
-        // पेज लोड होने पर नाम लोड करें
         document.addEventListener('DOMContentLoaded', loadRaiyatNames);
 
-        // फॉर्म सबमिशन हैंडलर
+        // फॉर्म सबमिशन (FormData का उपयोग CORS preflight अवॉइड करने के लिए)
         document.getElementById('landForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const khesra = document.getElementById('khesra').value.trim();
@@ -269,18 +268,17 @@
                 alert('खेसरा नंबर अनिवार्य है। कृपया भरें।');
                 return;
             }
-            const formData = {
-                raiyatName: document.getElementById('raiyat').value || '',
-                jamabandi: document.getElementById('jamabandi').value || '',
-                khata: document.getElementById('khata').value || '',
-                khesra: khesra,
-                rakwa: document.getElementById('rakwa').value || '',
-                north: document.getElementById('north').value || '',
-                south: document.getElementById('south').value || '',
-                east: document.getElementById('east').value || '',
-                west: document.getElementById('west').value || '',
-                remarks: document.getElementById('remarks').value || ''
-            };
+            const formData = new FormData();
+            formData.append('raiyatName', document.getElementById('raiyat').value || '');
+            formData.append('jamabandi', document.getElementById('jamabandi').value || '');
+            formData.append('khata', document.getElementById('khata').value || '');
+            formData.append('khesra', khesra);
+            formData.append('rakwa', document.getElementById('rakwa').value || '');
+            formData.append('north', document.getElementById('north').value || '');
+            formData.append('south', document.getElementById('south').value || '');
+            formData.append('east', document.getElementById('east').value || '');
+            formData.append('west', document.getElementById('west').value || '');
+            formData.append('remarks', document.getElementById('remarks').value || '');
             const submitBtn = document.getElementById('submitBtn');
             const loading = document.getElementById('loading');
             submitBtn.disabled = true;
@@ -289,8 +287,7 @@
                 const response = await fetch(URL, {
                     method: 'POST',
                     mode: 'cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
+                    body: formData  // कोई headers नहीं, FormData स्वचालित रूप से हैंडल करता है
                 });
                 if (!response.ok) throw new Error('सर्वर त्रुटि');
                 const result = await response.json();
@@ -301,18 +298,17 @@
                 }
             } catch (error) {
                 console.error('नेटवर्क त्रुटि:', error);
-                alert('नेटवर्क त्रुटि: कनेक्शन की जाँच करें। (होस्टिंग चेक करें।)');
+                alert('नेटवर्क त्रुटि: कनेक्शन की जाँच करें।');
             } finally {
                 loading.style.display = 'none';
                 submitBtn.disabled = false;
             }
         });
 
-        // सफलता मॉडल OK बटन
         document.getElementById('okBtn').addEventListener('click', () => {
             document.getElementById('successModal').style.display = 'none';
             document.getElementById('landForm').reset();
-            loadRaiyatNames(); // नाम दोबारा लोड करें
+            loadRaiyatNames();
         });
     </script>
 </body>
