@@ -163,13 +163,18 @@
             color: white;
         }
         
+        .edit-btn {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+        
         .export-btn {
             background: linear-gradient(135deg, #3498db, #2980b9);
             color: white;
         }
         
         .import-btn {
-            background: linear-gradient(135deg, #f39c12, #e67e22);
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
             color: white;
         }
         
@@ -308,9 +313,11 @@
             padding: 30px;
             border-radius: 15px;
             text-align: center;
-            max-width: 500px;
+            max-width: 600px;
             width: 90%;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         .popup-icon {
@@ -338,7 +345,7 @@
             padding: 15px;
             border-radius: 8px;
             margin: 15px 0;
-            max-height: 200px;
+            max-height: 300px;
             overflow-y: auto;
         }
         
@@ -368,6 +375,35 @@
             background: #2980b9;
         }
         
+        .record-details {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .detail-item {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #2c3e50;
+            display: inline-block;
+            width: 150px;
+        }
+        
+        .detail-value {
+            color: #555;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -395,6 +431,10 @@
             
             .share-options {
                 flex-direction: column;
+            }
+            
+            .detail-label {
+                width: 120px;
             }
         }
         
@@ -600,8 +640,8 @@
                 इस रिकॉर्ड को शेयर करने के लिए नीचे दिए गए विकल्प चुनें:
             </div>
             
-            <div class="share-content" id="shareContent">
-                <!-- शेयर कंटेंट यहाँ लोड होगा -->
+            <div class="record-details" id="shareContent">
+                <!-- रिकॉर्ड डिटेल्स यहाँ लोड होंगी -->
             </div>
             
             <div class="share-options">
@@ -616,6 +656,111 @@
                 </button>
                 <button class="delete-btn" onclick="closeSharePopup()">
                     <span class="icon">✖️</span> बंद करें
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- रिकॉर्ड डिटेल्स पॉपअप -->
+    <div id="detailsPopup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-icon">📋</div>
+            <div class="popup-title">रिकॉर्ड की पूरी जानकारी</div>
+            
+            <div class="record-details" id="detailsContent">
+                <!-- रिकॉर्ड डिटेल्स यहाँ लोड होंगी -->
+            </div>
+            
+            <div class="share-options">
+                <button class="edit-btn" onclick="editRecord()">
+                    <span class="icon">✏️</span> एडिट करें
+                </button>
+                <button class="whatsapp-btn" onclick="shareOnWhatsApp()">
+                    <span class="icon">📱</span> WhatsApp
+                </button>
+                <button class="delete-btn" onclick="closeDetailsPopup()">
+                    <span class="icon">✖️</span> बंद करें
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- एडिट पॉपअप -->
+    <div id="editPopup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-icon">✏️</div>
+            <div class="popup-title">रिकॉर्ड एडिट करें</div>
+            
+            <form id="editRecordForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editRaiyatName">रैयत का नाम</label>
+                        <select id="editRaiyatName">
+                            <option value="">-- चुनें --</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editJamabandiNumber">जमाबंदी नंबर</label>
+                        <input type="number" id="editJamabandiNumber" placeholder="जमाबंदी नंबर">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editKhataNumber">खाता नंबर</label>
+                        <input type="number" id="editKhataNumber" placeholder="खाता नंबर">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editKhesraNumber" class="required">खेसरा नंबर</label>
+                        <input type="number" id="editKhesraNumber" placeholder="खेसरा नंबर" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editRakwa">रकवा (डिसमिल में)</label>
+                        <input type="number" id="editRakwa" step="0.01" placeholder="रकवा">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editUttar">उत्तर</label>
+                        <input type="text" id="editUttar" placeholder="उत्तर दिशा">
+                    </div>
+                    <div class="form-group">
+                        <label for="editDakshin">दक्षिण</label>
+                        <input type="text" id="editDakshin" placeholder="दक्षिण दिशा">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editPurab">पूर्व</label>
+                        <input type="text" id="editPurab" placeholder="पूर्व दिशा">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPaschim">पश्चिम</label>
+                        <input type="text" id="editPaschim" placeholder="पश्चिम दिशा">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1 0 100%;">
+                        <label for="editRemarks">रिमार्क्स</label>
+                        <textarea id="editRemarks" rows="3" placeholder="रिमार्क्स"></textarea>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="share-options">
+                <button class="submit-btn" onclick="saveEditedRecord()">
+                    <span class="icon">💾</span> सेव करें
+                </button>
+                <button class="delete-btn" onclick="closeEditPopup()">
+                    <span class="icon">✖️</span> कैंसल
                 </button>
             </div>
         </div>
@@ -660,6 +805,7 @@
         };
 
         let currentRecordToShare = null;
+        let currentRecordToEdit = null;
 
         // Initialize data
         function initializeData() {
@@ -703,15 +849,18 @@
         function loadRaiyatNames() {
             const raiyatNames = JSON.parse(localStorage.getItem(STORAGE_KEYS.RAIYAT_NAMES) || '[]');
             const raiyatSelect = document.getElementById('raiyatName');
+            const editRaiyatSelect = document.getElementById('editRaiyatName');
             const raiyatList = document.getElementById('raiyatList');
             
-            // Update dropdown
-            raiyatSelect.innerHTML = '<option value="">-- चुनें --</option>';
-            raiyatNames.forEach(raiyat => {
-                const option = document.createElement('option');
-                option.value = raiyat.id;
-                option.textContent = raiyat.name;
-                raiyatSelect.appendChild(option);
+            // Update dropdowns
+            [raiyatSelect, editRaiyatSelect].forEach(select => {
+                select.innerHTML = '<option value="">-- चुनें --</option>';
+                raiyatNames.forEach(raiyat => {
+                    const option = document.createElement('option');
+                    option.value = raiyat.id;
+                    option.textContent = raiyat.name;
+                    select.appendChild(option);
+                });
             });
 
             // Update admin list
@@ -835,6 +984,9 @@
                         <td>${record.rakwa || '-'}</td>
                         <td>
                             <div class="action-buttons">
+                                <button class="edit-btn" onclick="showRecordDetails('${record.id}')" title="डिटेल्स देखें">
+                                    <span class="icon">👁️</span>
+                                </button>
                                 <button class="share-btn" onclick="shareRecord('${record.id}')" title="शेयर करें">
                                     <span class="icon">📤</span>
                                 </button>
@@ -851,6 +1003,63 @@
             container.innerHTML = tableHTML;
         }
 
+        // Show record details
+        function showRecordDetails(id) {
+            const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]');
+            const record = records.find(r => r.id === id);
+            
+            if (!record) {
+                showStatus('रिकॉर्ड नहीं मिला', 'error');
+                return;
+            }
+
+            currentRecordToShare = record;
+            
+            // Create details content
+            const detailsContent = `
+                <div class="detail-item">
+                    <span class="detail-label">📅 तारीख:</span>
+                    <span class="detail-value">${record.timestamp}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">👤 रैयत नाम:</span>
+                    <span class="detail-value">${record.raiyatName}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">🔢 जमाबंदी नंबर:</span>
+                    <span class="detail-value">${record.jamabandiNumber || 'नहीं दिया'}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">📋 खाता नंबर:</span>
+                    <span class="detail-value">${record.khataNumber || 'नहीं दिया'}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">🏷️ खेसरा नंबर:</span>
+                    <span class="detail-value">${record.khesraNumber}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">📏 रकवा:</span>
+                    <span class="detail-value">${record.rakwa || 'नहीं दिया'} डिसमिल</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">🗺️ चौहद्दी:</span>
+                    <span class="detail-value">
+                        <div>• उत्तर: ${record.uttar || 'नहीं दिया'}</div>
+                        <div>• दक्षिण: ${record.dakshin || 'नहीं दिया'}</div>
+                        <div>• पूर्व: ${record.purab || 'नहीं दिया'}</div>
+                        <div>• पश्चिम: ${record.paschim || 'नहीं दिया'}</div>
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">💬 रिमार्क्स:</span>
+                    <span class="detail-value">${record.remarks || 'नहीं दिया'}</span>
+                </div>
+            `;
+
+            document.getElementById('detailsContent').innerHTML = detailsContent;
+            document.getElementById('detailsPopup').style.display = 'flex';
+        }
+
         // Share record function
         function shareRecord(id) {
             const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]');
@@ -865,23 +1074,110 @@
             
             // Create share content
             const shareContent = `
-                <strong>🌾 भू-अभिलेख रिकॉर्ड</strong><br><br>
-                <strong>तारीख:</strong> ${record.timestamp}<br>
-                <strong>रैयत नाम:</strong> ${record.raiyatName}<br>
-                <strong>जमाबंदी नंबर:</strong> ${record.jamabandiNumber || 'नहीं दिया'}<br>
-                <strong>खाता नंबर:</strong> ${record.khataNumber || 'नहीं दिया'}<br>
-                <strong>खेसरा नंबर:</strong> ${record.khesraNumber}<br>
-                <strong>रकवा:</strong> ${record.rakwa || 'नहीं दिया'} डिसमिल<br>
-                <strong>चौहद्दी:</strong><br>
-                &nbsp;&nbsp;- उत्तर: ${record.uttar || 'नहीं दिया'}<br>
-                &nbsp;&nbsp;- दक्षिण: ${record.dakshin || 'नहीं दिया'}<br>
-                &nbsp;&nbsp;- पूर्व: ${record.purab || 'नहीं दिया'}<br>
-                &nbsp;&nbsp;- पश्चिम: ${record.paschim || 'नहीं दिया'}<br>
-                <strong>रिमार्क्स:</strong> ${record.remarks || 'नहीं दिया'}
+                <div class="detail-item">
+                    <span class="detail-label">📅 तारीख:</span>
+                    <span class="detail-value">${record.timestamp}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">👤 रैयत नाम:</span>
+                    <span class="detail-value">${record.raiyatName}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">🔢 जमाबंदी नंबर:</span>
+                    <span class="detail-value">${record.jamabandiNumber || 'नहीं दिया'}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">📋 खाता नंबर:</span>
+                    <span class="detail-value">${record.khataNumber || 'नहीं दिया'}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">🏷️ खेसरा नंबर:</span>
+                    <span class="detail-value">${record.khesraNumber}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">📏 रकवा:</span>
+                    <span class="detail-value">${record.rakwa || 'नहीं दिया'} डिसमिल</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">🗺️ चौहद्दी:</span>
+                    <span class="detail-value">
+                        <div>• उत्तर: ${record.uttar || 'नहीं दिया'}</div>
+                        <div>• दक्षिण: ${record.dakshin || 'नहीं दिया'}</div>
+                        <div>• पूर्व: ${record.purab || 'नहीं दिया'}</div>
+                        <div>• पश्चिम: ${record.paschim || 'नहीं दिया'}</div>
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">💬 रिमार्क्स:</span>
+                    <span class="detail-value">${record.remarks || 'नहीं दिया'}</span>
+                </div>
             `;
 
             document.getElementById('shareContent').innerHTML = shareContent;
             document.getElementById('sharePopup').style.display = 'flex';
+        }
+
+        // Edit record
+        function editRecord() {
+            if (!currentRecordToShare) return;
+
+            currentRecordToEdit = currentRecordToShare;
+            
+            // Fill edit form with current data
+            document.getElementById('editRaiyatName').value = currentRecordToEdit.raiyatId;
+            document.getElementById('editJamabandiNumber').value = currentRecordToEdit.jamabandiNumber || '';
+            document.getElementById('editKhataNumber').value = currentRecordToEdit.khataNumber || '';
+            document.getElementById('editKhesraNumber').value = currentRecordToEdit.khesraNumber;
+            document.getElementById('editRakwa').value = currentRecordToEdit.rakwa || '';
+            document.getElementById('editUttar').value = currentRecordToEdit.uttar || '';
+            document.getElementById('editDakshin').value = currentRecordToEdit.dakshin || '';
+            document.getElementById('editPurab').value = currentRecordToEdit.purab || '';
+            document.getElementById('editPaschim').value = currentRecordToEdit.paschim || '';
+            document.getElementById('editRemarks').value = currentRecordToEdit.remarks || '';
+
+            // Close details popup and open edit popup
+            closeDetailsPopup();
+            document.getElementById('editPopup').style.display = 'flex';
+        }
+
+        // Save edited record
+        function saveEditedRecord() {
+            if (!currentRecordToEdit) return;
+
+            const khesraNumber = document.getElementById('editKhesraNumber').value.trim();
+            if (!khesraNumber) {
+                showStatus('कृपया खेसरा नंबर दर्ज करें', 'error');
+                return;
+            }
+
+            const selectedRaiyat = document.getElementById('editRaiyatName');
+            const updatedRecord = {
+                ...currentRecordToEdit,
+                raiyatId: selectedRaiyat.value,
+                raiyatName: selectedRaiyat.options[selectedRaiyat.selectedIndex]?.text || '',
+                jamabandiNumber: document.getElementById('editJamabandiNumber').value,
+                khataNumber: document.getElementById('editKhataNumber').value,
+                khesraNumber: khesraNumber,
+                rakwa: document.getElementById('editRakwa').value,
+                uttar: document.getElementById('editUttar').value,
+                dakshin: document.getElementById('editDakshin').value,
+                purab: document.getElementById('editPurab').value,
+                paschim: document.getElementById('editPaschim').value,
+                remarks: document.getElementById('editRemarks').value,
+                timestamp: new Date().toLocaleString('hi-IN') // Update timestamp
+            };
+
+            // Update in local storage
+            const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]');
+            const updatedRecords = records.map(record => 
+                record.id === currentRecordToEdit.id ? updatedRecord : record
+            );
+            
+            localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify(updatedRecords));
+            loadRecordsTable();
+            
+            showStatus('रिकॉर्ड सफलतापूर्वक अपडेट हो गया', 'success');
+            closeEditPopup();
         }
 
         // Share on WhatsApp
@@ -916,15 +1212,34 @@
 
         // Copy to clipboard
         function copyToClipboard() {
-            const shareContent = document.getElementById('shareContent');
-            const textToCopy = shareContent.innerText;
+            if (!currentRecordToShare) return;
+
+            const text = `
+भू-अभिलेख रिकॉर्ड
+===================
+
+तारीख: ${currentRecordToShare.timestamp}
+रैयत नाम: ${currentRecordToShare.raiyatName}
+जमाबंदी नंबर: ${currentRecordToShare.jamabandiNumber || 'नहीं दिया'}
+खाता नंबर: ${currentRecordToShare.khataNumber || 'नहीं दिया'}
+खेसरा नंबर: ${currentRecordToShare.khesraNumber}
+रकवा: ${currentRecordToShare.rakwa || 'नहीं दिया'} डिसमिल
+
+चौहद्दी:
+- उत्तर: ${currentRecordToShare.uttar || 'नहीं दिया'}
+- दक्षिण: ${currentRecordToShare.dakshin || 'नहीं दिया'}
+- पूर्व: ${currentRecordToShare.purab || 'नहीं दिया'}
+- पश्चिम: ${currentRecordToShare.paschim || 'नहीं दिया'}
+
+रिमार्क्स: ${currentRecordToShare.remarks || 'नहीं दिया'}
+            `.trim();
             
-            navigator.clipboard.writeText(textToCopy).then(() => {
+            navigator.clipboard.writeText(text).then(() => {
                 showStatus('रिकॉर्ड क्लिपबोर्ड में कॉपी हो गया', 'success');
             }).catch(() => {
                 // Fallback for older browsers
                 const textArea = document.createElement('textarea');
-                textArea.value = textToCopy;
+                textArea.value = text;
                 document.body.appendChild(textArea);
                 textArea.select();
                 document.execCommand('copy');
@@ -975,10 +1290,20 @@
             showStatus('टेक्स्ट फाइल डाउनलोड हो गई', 'success');
         }
 
-        // Close share popup
+        // Close popups
         function closeSharePopup() {
             document.getElementById('sharePopup').style.display = 'none';
             currentRecordToShare = null;
+        }
+
+        function closeDetailsPopup() {
+            document.getElementById('detailsPopup').style.display = 'none';
+            currentRecordToShare = null;
+        }
+
+        function closeEditPopup() {
+            document.getElementById('editPopup').style.display = 'none';
+            currentRecordToEdit = null;
         }
 
         // Show import popup
