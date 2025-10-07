@@ -142,6 +142,7 @@
             justify-content: center;
             gap: 15px;
             margin-top: 30px;
+            flex-wrap: wrap;
         }
         
         button {
@@ -164,6 +165,21 @@
         
         .export-btn {
             background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .import-btn {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+        
+        .share-btn {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+        }
+        
+        .whatsapp-btn {
+            background: linear-gradient(135deg, #25D366, #128C7E);
             color: white;
         }
         
@@ -237,6 +253,16 @@
             background: #f5f5f5;
         }
         
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .action-buttons button {
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+        
         .status-message {
             padding: 15px;
             margin: 15px 0;
@@ -258,6 +284,12 @@
             border: 1px solid #f5c6cb;
         }
         
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
         .popup-overlay {
             display: none;
             position: fixed;
@@ -276,7 +308,7 @@
             padding: 30px;
             border-radius: 15px;
             text-align: center;
-            max-width: 400px;
+            max-width: 500px;
             width: 90%;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
@@ -300,6 +332,42 @@
             line-height: 1.5;
         }
         
+        .share-content {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .share-options {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .file-input-container {
+            margin: 15px 0;
+        }
+        
+        .file-input-label {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .file-input-label:hover {
+            background: #2980b9;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -318,6 +386,14 @@
             }
             
             .admin-form {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .share-options {
                 flex-direction: column;
             }
         }
@@ -446,10 +522,13 @@
             
             <div class="btn-group">
                 <button class="export-btn" onclick="exportToExcel()">
-                    <span class="icon">📥</span> Excel में Export करें
+                    <span class="icon">📥</span> Excel Export
+                </button>
+                <button class="import-btn" onclick="showImportPopup()">
+                    <span class="icon">📤</span> Excel Import
                 </button>
                 <button class="delete-btn" onclick="clearAllRecords()">
-                    <span class="icon">🗑️</span> सभी रिकॉर्ड्स डिलीट करें
+                    <span class="icon">🗑️</span> सभी डिलीट करें
                 </button>
             </div>
             
@@ -484,10 +563,10 @@
                 
                 <div class="btn-group">
                     <button class="export-btn" onclick="backupData()">
-                        <span class="icon">💾</span> डेटा बैकअप लें
+                        <span class="icon">💾</span> डेटा बैकअप
                     </button>
                     <button class="submit-btn" onclick="restoreData()">
-                        <span class="icon">🔄</span> डेटा रीस्टोर करें
+                        <span class="icon">🔄</span> डेटा रीस्टोर
                     </button>
                     <input type="file" id="restoreFile" accept=".json" style="display: none;" onchange="handleFileUpload(this.files[0])">
                 </div>
@@ -512,12 +591,75 @@
         </div>
     </div>
 
+    <!-- शेयर पॉपअप -->
+    <div id="sharePopup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-icon">📤</div>
+            <div class="popup-title">रिकॉर्ड शेयर करें</div>
+            <div class="popup-message">
+                इस रिकॉर्ड को शेयर करने के लिए नीचे दिए गए विकल्प चुनें:
+            </div>
+            
+            <div class="share-content" id="shareContent">
+                <!-- शेयर कंटेंट यहाँ लोड होगा -->
+            </div>
+            
+            <div class="share-options">
+                <button class="whatsapp-btn" onclick="shareOnWhatsApp()">
+                    <span class="icon">📱</span> WhatsApp
+                </button>
+                <button class="share-btn" onclick="copyToClipboard()">
+                    <span class="icon">📋</span> कॉपी करें
+                </button>
+                <button class="export-btn" onclick="downloadAsText()">
+                    <span class="icon">📄</span> टेक्स्ट फाइल
+                </button>
+                <button class="delete-btn" onclick="closeSharePopup()">
+                    <span class="icon">✖️</span> बंद करें
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- इम्पोर्ट पॉपअप -->
+    <div id="importPopup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-icon">📤</div>
+            <div class="popup-title">Excel से डेटा इम्पोर्ट करें</div>
+            <div class="popup-message">
+                Excel फाइल से डेटा इम्पोर्ट करने के लिए नीचे दिए गए स्टेप्स फॉलो करें:<br><br>
+                <strong>फाइल फॉर्मेट:</strong> CSV या Excel (.xlsx, .xls)<br>
+                <strong>कॉलम्स:</strong> रैयत नाम, जमाबंदी नंबर, खाता नंबर, खेसरा नंबर, रकवा, उत्तर, दक्षिण, पूर्व, पश्चिम, रिमार्क्स
+            </div>
+            
+            <div class="file-input-container">
+                <label for="excelFile" class="file-input-label">
+                    <span class="icon">📁</span> Excel फाइल चुनें
+                </label>
+                <input type="file" id="excelFile" accept=".csv,.xlsx,.xls" style="display: none;" onchange="handleExcelImport(this.files[0])">
+                <div id="fileName" style="margin-top: 10px; font-style: italic;"></div>
+            </div>
+            
+            <div class="share-options">
+                <button class="submit-btn" onclick="document.getElementById('excelFile').click()">
+                    <span class="icon">📁</span> फाइल चुनें
+                </button>
+                <button class="delete-btn" onclick="closeImportPopup()">
+                    <span class="icon">✖️</span> बंद करें
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         // Local Storage Keys
         const STORAGE_KEYS = {
             RAIYAT_NAMES: 'bhoo_abhilekh_raiyat_names',
             LAND_RECORDS: 'bhoo_abhilekh_land_records'
         };
+
+        let currentRecordToShare = null;
 
         // Initialize data
         function initializeData() {
@@ -692,9 +834,14 @@
                         <td>${record.khataNumber || '-'}</td>
                         <td>${record.rakwa || '-'}</td>
                         <td>
-                            <button class="delete-btn" onclick="deleteRecord('${record.id}')">
-                                <span class="icon">🗑️</span>
-                            </button>
+                            <div class="action-buttons">
+                                <button class="share-btn" onclick="shareRecord('${record.id}')" title="शेयर करें">
+                                    <span class="icon">📤</span>
+                                </button>
+                                <button class="delete-btn" onclick="deleteRecord('${record.id}')" title="डिलीट करें">
+                                    <span class="icon">🗑️</span>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 `;
@@ -702,6 +849,215 @@
 
             tableHTML += '</tbody></table>';
             container.innerHTML = tableHTML;
+        }
+
+        // Share record function
+        function shareRecord(id) {
+            const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]');
+            const record = records.find(r => r.id === id);
+            
+            if (!record) {
+                showStatus('रिकॉर्ड नहीं मिला', 'error');
+                return;
+            }
+
+            currentRecordToShare = record;
+            
+            // Create share content
+            const shareContent = `
+                <strong>🌾 भू-अभिलेख रिकॉर्ड</strong><br><br>
+                <strong>तारीख:</strong> ${record.timestamp}<br>
+                <strong>रैयत नाम:</strong> ${record.raiyatName}<br>
+                <strong>जमाबंदी नंबर:</strong> ${record.jamabandiNumber || 'नहीं दिया'}<br>
+                <strong>खाता नंबर:</strong> ${record.khataNumber || 'नहीं दिया'}<br>
+                <strong>खेसरा नंबर:</strong> ${record.khesraNumber}<br>
+                <strong>रकवा:</strong> ${record.rakwa || 'नहीं दिया'} डिसमिल<br>
+                <strong>चौहद्दी:</strong><br>
+                &nbsp;&nbsp;- उत्तर: ${record.uttar || 'नहीं दिया'}<br>
+                &nbsp;&nbsp;- दक्षिण: ${record.dakshin || 'नहीं दिया'}<br>
+                &nbsp;&nbsp;- पूर्व: ${record.purab || 'नहीं दिया'}<br>
+                &nbsp;&nbsp;- पश्चिम: ${record.paschim || 'नहीं दिया'}<br>
+                <strong>रिमार्क्स:</strong> ${record.remarks || 'नहीं दिया'}
+            `;
+
+            document.getElementById('shareContent').innerHTML = shareContent;
+            document.getElementById('sharePopup').style.display = 'flex';
+        }
+
+        // Share on WhatsApp
+        function shareOnWhatsApp() {
+            if (!currentRecordToShare) return;
+
+            const text = `
+🌾 *भू-अभिलेख रिकॉर्ड*
+
+📅 *तारीख:* ${currentRecordToShare.timestamp}
+👤 *रैयत नाम:* ${currentRecordToShare.raiyatName}
+🔢 *जमाबंदी नंबर:* ${currentRecordToShare.jamabandiNumber || 'नहीं दिया'}
+📋 *खाता नंबर:* ${currentRecordToShare.khataNumber || 'नहीं दिया'}
+🏷️ *खेसरा नंबर:* ${currentRecordToShare.khesraNumber}
+📏 *रकवा:* ${currentRecordToShare.rakwa || 'नहीं दिया'} डिसमिल
+
+🗺️ *चौहद्दी:*
+• उत्तर: ${currentRecordToShare.uttar || 'नहीं दिया'}
+• दक्षिण: ${currentRecordToShare.dakshin || 'नहीं दिया'}
+• पूर्व: ${currentRecordToShare.purab || 'नहीं दिया'}
+• पश्चिम: ${currentRecordToShare.paschim || 'नहीं दिया'}
+
+💬 *रिमार्क्स:* ${currentRecordToShare.remarks || 'नहीं दिया'}
+            `.trim();
+
+            const encodedText = encodeURIComponent(text);
+            const whatsappUrl = `https://wa.me/?text=${encodedText}`;
+            
+            window.open(whatsappUrl, '_blank');
+            showStatus('WhatsApp में शेयर करने के लिए तैयार', 'success');
+        }
+
+        // Copy to clipboard
+        function copyToClipboard() {
+            const shareContent = document.getElementById('shareContent');
+            const textToCopy = shareContent.innerText;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showStatus('रिकॉर्ड क्लिपबोर्ड में कॉपी हो गया', 'success');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = textToCopy;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showStatus('रिकॉर्ड क्लिपबोर्ड में कॉपी हो गया', 'success');
+            });
+        }
+
+        // Download as text file
+        function downloadAsText() {
+            if (!currentRecordToShare) return;
+
+            const content = `
+भू-अभिलेख रिकॉर्ड
+===================
+
+तारीख: ${currentRecordToShare.timestamp}
+रैयत नाम: ${currentRecordToShare.raiyatName}
+जमाबंदी नंबर: ${currentRecordToShare.jamabandiNumber || 'नहीं दिया'}
+खाता नंबर: ${currentRecordToShare.khataNumber || 'नहीं दिया'}
+खेसरा नंबर: ${currentRecordToShare.khesraNumber}
+रकवा: ${currentRecordToShare.rakwa || 'नहीं दिया'} डिसमिल
+
+चौहद्दी:
+- उत्तर: ${currentRecordToShare.uttar || 'नहीं दिया'}
+- दक्षिण: ${currentRecordToShare.dakshin || 'नहीं दिया'}
+- पूर्व: ${currentRecordToShare.purab || 'नहीं दिया'}
+- पश्चिम: ${currentRecordToShare.paschim || 'नहीं दिया'}
+
+रिमार्क्स: ${currentRecordToShare.remarks || 'नहीं दिया'}
+
+===================
+जनरेट किया गया: ${new Date().toLocaleString('hi-IN')}
+            `.trim();
+
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `भू-अभिलेख_${currentRecordToShare.raiyatName}_${currentRecordToShare.khesraNumber}.txt`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showStatus('टेक्स्ट फाइल डाउनलोड हो गई', 'success');
+        }
+
+        // Close share popup
+        function closeSharePopup() {
+            document.getElementById('sharePopup').style.display = 'none';
+            currentRecordToShare = null;
+        }
+
+        // Show import popup
+        function showImportPopup() {
+            document.getElementById('importPopup').style.display = 'flex';
+        }
+
+        // Close import popup
+        function closeImportPopup() {
+            document.getElementById('importPopup').style.display = 'none';
+            document.getElementById('excelFile').value = '';
+            document.getElementById('fileName').textContent = '';
+        }
+
+        // Handle Excel import
+        function handleExcelImport(file) {
+            if (!file) return;
+
+            document.getElementById('fileName').textContent = `चुनी गई फाइल: ${file.name}`;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // Get first worksheet
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    if (jsonData.length === 0) {
+                        showStatus('Excel फाइल में कोई डेटा नहीं मिला', 'error');
+                        return;
+                    }
+
+                    let importedCount = 0;
+                    const existingRecords = JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]');
+
+                    jsonData.forEach((row, index) => {
+                        // Map Excel columns to our record format
+                        const record = {
+                            id: Date.now().toString() + index,
+                            timestamp: new Date().toLocaleString('hi-IN'),
+                            raiyatName: row['रैयत नाम'] || row['raiyatName'] || '',
+                            jamabandiNumber: row['जमाबंदी नंबर'] || row['jamabandiNumber'] || '',
+                            khataNumber: row['खाता नंबर'] || row['khataNumber'] || '',
+                            khesraNumber: row['खेसरा नंबर'] || row['khesraNumber'] || '',
+                            rakwa: row['रकवा'] || row['rakwa'] || '',
+                            uttar: row['उत्तर'] || row['uttar'] || '',
+                            dakshin: row['दक्षिण'] || row['dakshin'] || '',
+                            purab: row['पूर्व'] || row['purab'] || '',
+                            paschim: row['पश्चिम'] || row['paschim'] || '',
+                            remarks: row['रिमार्क्स'] || row['remarks'] || ''
+                        };
+
+                        // Only add if khesraNumber exists
+                        if (record.khesraNumber) {
+                            existingRecords.push(record);
+                            importedCount++;
+                        }
+                    });
+
+                    localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify(existingRecords));
+                    loadRecordsTable();
+                    
+                    showStatus(`${importedCount} रिकॉर्ड्स सफलतापूर्वक इम्पोर्ट हो गए`, 'success');
+                    closeImportPopup();
+
+                } catch (error) {
+                    console.error('Excel import error:', error);
+                    showStatus('Excel फाइल पढ़ने में त्रुटि: ' + error.message, 'error');
+                }
+            };
+
+            reader.onerror = function() {
+                showStatus('फाइल पढ़ने में त्रुटि', 'error');
+            };
+
+            reader.readAsArrayBuffer(file);
         }
 
         // Delete individual record
