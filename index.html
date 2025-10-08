@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>भू-अभिलेख फॉर्म - Local Storage</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -143,6 +144,82 @@
             font-size: 16px;
             opacity: 0.9;
             font-weight: 600;
+        }
+        
+        /* Chart Section Styles */
+        .chart-section {
+            display: flex;
+            gap: 40px;
+            margin: 40px 0;
+            align-items: flex-start;
+        }
+        
+        .chart-container {
+            width: 450px;
+            height: 450px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+        
+        .chart-legend {
+            flex: 1;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .chart-legend h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .legend-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .color-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .legend-details {
+            flex: 1;
+        }
+        
+        .legend-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .legend-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #666;
         }
         
         .raiyat-summary {
@@ -530,13 +607,18 @@
         }
         
         .raiyat-name-card {
-            background: linear-gradient(135deg, #667eea, #764ba2);
             padding: 20px;
             border-radius: 10px;
             color: white;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
+            border: none;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         
         .raiyat-name-card:hover {
@@ -553,6 +635,17 @@
         .raiyat-record-count {
             font-size: 14px;
             opacity: 0.9;
+        }
+        
+        .backup-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .icon {
@@ -601,6 +694,16 @@
             
             .raiyat-stats {
                 grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .chart-section {
+                flex-direction: column;
+            }
+            
+            .chart-container {
+                width: 100%;
+                max-width: 450px;
+                margin: 0 auto;
             }
         }
     </style>
@@ -743,6 +846,21 @@
                     </div>
                 </div>
                 
+                <!-- Circular Graph Section -->
+                <div class="dashboard-title">📊 रकवा वितरण</div>
+                <div class="chart-section">
+                    <div class="chart-container">
+                        <canvas id="rakwaChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-legend">
+                        <h3>रकवा वितरण विवरण</h3>
+                        <div id="chartLegend">
+                            <!-- Legend items will be dynamically added -->
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="raiyat-summary" id="raiyatSummary" style="display: none;">
                     <h3>👤 रैयत सारांश - <span id="selectedRaiyatName"></span></h3>
                     <div class="raiyat-stats">
@@ -814,6 +932,35 @@
                         <span class="icon">🔄</span> डेटा रीस्टोर
                     </button>
                     <input type="file" id="restoreFile" accept=".json" style="display: none;" onchange="handleFileUpload(this.files[0])">
+                </div>
+            </div>
+            
+            <!-- Auto Backup System -->
+            <div class="admin-controls">
+                <div class="section-title">
+                    <span class="icon">🔄</span> Auto Backup System
+                </div>
+                
+                <div style="background: #e8f4fc; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <strong>Auto Backup Status:</strong>
+                    <div id="currentBackupStatus">
+                        <!-- Backup status dynamically updated -->
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="export-btn" onclick="showBackupStatus()">
+                        <span class="icon">📊</span> Backup Status
+                    </button>
+                    <button class="submit-btn" onclick="manualBackup()">
+                        <span class="icon">💾</span> Manual Backup
+                    </button>
+                    <button class="import-btn" onclick="showBackupHistory()">
+                        <span class="icon">📜</span> Restore from Backup
+                    </button>
+                    <button class="delete-btn" onclick="showEmergencyRecovery()">
+                        <span class="icon">🚨</span> Emergency Recovery
+                    </button>
                 </div>
             </div>
         </div>
@@ -976,12 +1123,22 @@
         // Local Storage Keys
         const STORAGE_KEYS = {
             RAIYAT_NAMES: 'bhoo_abhilekh_raiyat_names',
-            LAND_RECORDS: 'bhoo_abhilekh_land_records'
+            LAND_RECORDS: 'bhoo_abhilekh_land_records',
+            RAIYAT_COLORS: 'bhoo_abhilekh_raiyat_colors'
+        };
+
+        // Auto Backup Settings
+        const AUTO_BACKUP_SETTINGS = {
+            enabled: true,
+            interval: 10 * 60 * 1000, // 10 minutes
+            maxBackups: 5,
+            backupKey: 'bhoo_abhilekh_auto_backups'
         };
 
         let currentRecordToShare = null;
         let currentRecordToEdit = null;
         let currentRaiyatFilter = null;
+        let rakwaChart = null;
 
         // Initialize data
         function initializeData() {
@@ -1002,15 +1159,566 @@
                 localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify([]));
             }
 
+            // Initialize raiyat colors if not exists
+            if (!localStorage.getItem(STORAGE_KEYS.RAIYAT_COLORS)) {
+                localStorage.setItem(STORAGE_KEYS.RAIYAT_COLORS, JSON.stringify({}));
+            }
+
             loadRaiyatNames();
             loadRecordsTable();
             updateDashboard();
+            updateRakwaChart();
+            
+            // Setup auto backup
+            setupAutoBackup();
+        }
+
+        // Get or assign color for raiyat
+        function getRaiyatColor(raiyatName) {
+            let raiyatColors = JSON.parse(localStorage.getItem(STORAGE_KEYS.RAIYAT_COLORS) || '{}');
+            
+            if (!raiyatColors[raiyatName]) {
+                // Assign new color
+                const colors = [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                    '#9966FF', '#FF9F40', '#C9CBCF', '#FF6384',
+                    '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
+                ];
+                
+                const raiyatNames = Object.keys(raiyatColors);
+                const colorIndex = raiyatNames.length % colors.length;
+                raiyatColors[raiyatName] = colors[colorIndex];
+                
+                localStorage.setItem(STORAGE_KEYS.RAIYAT_COLORS, JSON.stringify(raiyatColors));
+            }
+            
+            return raiyatColors[raiyatName];
+        }
+
+        // Update Circular Graph
+        function updateRakwaChart() {
+            const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]');
+            
+            // Calculate rakwa by raiyat
+            const rakwaByRaiyat = {};
+            records.forEach(record => {
+                const rakwa = parseFloat(record.rakwa) || 0;
+                if (rakwa > 0 && record.raiyatName) {
+                    if (rakwaByRaiyat[record.raiyatName]) {
+                        rakwaByRaiyat[record.raiyatName] += rakwa;
+                    } else {
+                        rakwaByRaiyat[record.raiyatName] = rakwa;
+                    }
+                }
+            });
+
+            const raiyatNames = Object.keys(rakwaByRaiyat);
+            const rakwaValues = Object.values(rakwaByRaiyat);
+            const totalRakwa = rakwaValues.reduce((a, b) => a + b, 0);
+
+            // Get colors for each raiyat
+            const chartColors = raiyatNames.map(name => getRaiyatColor(name));
+
+            const ctx = document.getElementById('rakwaChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (rakwaChart) {
+                rakwaChart.destroy();
+            }
+
+            // Only create chart if there's data
+            if (raiyatNames.length > 0) {
+                rakwaChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: raiyatNames,
+                        datasets: [{
+                            data: rakwaValues,
+                            backgroundColor: chartColors,
+                            borderWidth: 2,
+                            borderColor: '#ffffff',
+                            hoverBorderWidth: 3,
+                            hoverBorderColor: '#2c3e50'
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.raw || 0;
+                                        const percentage = totalRakwa > 0 ? Math.round((value / totalRakwa) * 100) : 0;
+                                        return `${label}: ${value.toFixed(2)} डिसमिल (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        },
+                        onClick: function(evt, elements) {
+                            if (elements.length > 0) {
+                                const index = elements[0].index;
+                                const raiyatName = raiyatNames[index];
+                                filterByRaiyat(raiyatName);
+                            }
+                        },
+                        cutout: '60%',
+                        animation: {
+                            animateScale: true,
+                            animateRotate: true
+                        }
+                    }
+                });
+
+                // Update legend
+                updateChartLegend(raiyatNames, rakwaValues, chartColors, totalRakwa);
+            } else {
+                // No data message
+                document.getElementById('chartLegend').innerHTML = '<p style="text-align: center; color: #666;">कोई डेटा उपलब्ध नहीं है</p>';
+            }
+        }
+
+        // Update Chart Legend
+        function updateChartLegend(labels, values, colors, totalRakwa) {
+            const legendContainer = document.getElementById('chartLegend');
+            legendContainer.innerHTML = '';
+
+            if (labels.length === 0) {
+                legendContainer.innerHTML = '<p style="text-align: center; color: #666;">कोई डेटा उपलब्ध नहीं है</p>';
+                return;
+            }
+
+            labels.forEach((label, index) => {
+                const value = values[index];
+                const percentage = totalRakwa > 0 ? Math.round((value / totalRakwa) * 100) : 0;
+                const color = colors[index];
+                
+                const legendItem = document.createElement('div');
+                legendItem.className = 'legend-item';
+                legendItem.innerHTML = `
+                    <div class="color-box" style="background-color: ${color};"></div>
+                    <div class="legend-details">
+                        <div class="legend-name">${label}</div>
+                        <div class="legend-stats">
+                            <span>${value.toFixed(2)} डिसमिल</span>
+                            <span>${percentage}%</span>
+                        </div>
+                    </div>
+                `;
+                
+                legendItem.onclick = function() {
+                    filterByRaiyat(label);
+                };
+                
+                // Add hover effects
+                legendItem.addEventListener('mouseenter', function() {
+                    if (rakwaChart) {
+                        rakwaChart.setActiveElements([{ datasetIndex: 0, index: index }]);
+                        rakwaChart.update();
+                    }
+                });
+                
+                legendItem.addEventListener('mouseleave', function() {
+                    if (rakwaChart) {
+                        rakwaChart.setActiveElements([]);
+                        rakwaChart.update();
+                    }
+                });
+                
+                legendContainer.appendChild(legendItem);
+            });
+        }
+
+        // Show all raiyat names with colors
+        function showAllRaiyatNames() {
+            const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]');
+            const raiyatNames = JSON.parse(localStorage.getItem(STORAGE_KEYS.RAIYAT_NAMES) || '[]');
+            
+            // Get raiyat names with record counts
+            const raiyatWithCounts = raiyatNames.map(raiyat => {
+                const count = records.filter(record => record.raiyatName === raiyat.name).length;
+                return {
+                    name: raiyat.name,
+                    count: count,
+                    color: getRaiyatColor(raiyat.name)
+                };
+            }).filter(raiyat => raiyat.count > 0);
+            
+            const container = document.getElementById('raiyatNamesList');
+            container.innerHTML = '';
+            
+            if (raiyatWithCounts.length === 0) {
+                container.innerHTML = '<p style="text-align: center; width: 100%;">कोई रैयत नहीं मिला</p>';
+            } else {
+                raiyatWithCounts.forEach(raiyat => {
+                    const card = document.createElement('div');
+                    card.className = 'raiyat-name-card';
+                    card.style.background = raiyat.color;
+                    card.innerHTML = `
+                        <div class="raiyat-name">${raiyat.name}</div>
+                        <div class="raiyat-record-count">${raiyat.count} रिकॉर्ड्स</div>
+                    `;
+                    card.onclick = () => filterByRaiyat(raiyat.name);
+                    container.appendChild(card);
+                });
+            }
+            
+            document.getElementById('raiyatNamesContainer').style.display = 'block';
+        }
+
+        // Auto Backup System
+        function setupAutoBackup() {
+            if (!AUTO_BACKUP_SETTINGS.enabled) return;
+            
+            console.log('🔄 Auto backup system started...');
+            
+            // Backup immediately
+            autoBackupData();
+            
+            // Backup every 10 minutes
+            setInterval(() => {
+                autoBackupData();
+            }, AUTO_BACKUP_SETTINGS.interval);
+            
+            // Update backup status display
+            updateBackupStatusDisplay();
+        }
+
+        function autoBackupData() {
+            try {
+                const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]');
+                const raiyatNames = JSON.parse(localStorage.getItem(STORAGE_KEYS.RAIYAT_NAMES) || '[]');
+                
+                // Only backup if there's data
+                if (records.length === 0 && raiyatNames.length === 0) return;
+                
+                const data = {
+                    raiyatNames: raiyatNames,
+                    landRecords: records,
+                    timestamp: new Date().toISOString(),
+                    displayTime: new Date().toLocaleString('hi-IN'),
+                    recordCount: records.length,
+                    raiyatCount: new Set(records.map(record => record.raiyatName).filter(name => name)).size
+                };
+
+                // Get existing backups
+                const existingBackups = JSON.parse(localStorage.getItem(AUTO_BACKUP_SETTINGS.backupKey) || '[]');
+                
+                // Add new backup
+                existingBackups.push(data);
+                
+                // Keep only latest backups (remove old ones)
+                if (existingBackups.length > AUTO_BACKUP_SETTINGS.maxBackups) {
+                    existingBackups.splice(0, existingBackups.length - AUTO_BACKUP_SETTINGS.maxBackups);
+                }
+                
+                // Save backups
+                localStorage.setItem(AUTO_BACKUP_SETTINGS.backupKey, JSON.stringify(existingBackups));
+                
+                // Update display
+                updateBackupStatusDisplay();
+                
+                console.log('✅ Auto backup completed:', data.displayTime);
+                
+            } catch (error) {
+                console.error('❌ Auto backup failed:', error);
+            }
+        }
+
+        function getBackupHistory() {
+            return JSON.parse(localStorage.getItem(AUTO_BACKUP_SETTINGS.backupKey) || '[]');
+        }
+
+        function updateBackupStatusDisplay() {
+            const backups = getBackupHistory();
+            const lastBackup = backups[backups.length - 1];
+            const statusElement = document.getElementById('currentBackupStatus');
+            
+            if (statusElement) {
+                if (lastBackup) {
+                    statusElement.innerHTML = `
+                        <div style="color: #27ae60;">
+                            ✅ Active | Last: ${lastBackup.displayTime} | 
+                            Records: ${lastBackup.recordCount} | 
+                            Backups: ${backups.length}/${AUTO_BACKUP_SETTINGS.maxBackups}
+                        </div>
+                    `;
+                } else {
+                    statusElement.innerHTML = '<div style="color: #e74c3c;">❌ No backups yet</div>';
+                }
+            }
+        }
+
+        function showBackupStatus() {
+            const backups = getBackupHistory();
+            const lastBackup = backups[backups.length - 1];
+            
+            let statusMessage = '';
+            
+            if (lastBackup) {
+                statusMessage = `
+                    ✅ <strong>Auto Backup Active</strong><br>
+                    🕒 Last Backup: ${lastBackup.displayTime}<br>
+                    📋 Records: ${lastBackup.recordCount}<br>
+                    👥 Raiyat: ${lastBackup.raiyatCount}<br>
+                    💾 Total Backups: ${backups.length}/${AUTO_BACKUP_SETTINGS.maxBackups}
+                `;
+            } else {
+                statusMessage = '❌ No backups available yet';
+            }
+            
+            showStatus(statusMessage, 'success');
+        }
+
+        function manualBackup() {
+            autoBackupData();
+            showStatus('Manual backup completed successfully', 'success');
+        }
+
+        function showBackupHistory() {
+            const backups = getBackupHistory();
+            
+            if (backups.length === 0) {
+                showStatus('कोई backup उपलब्ध नहीं है', 'warning');
+                return;
+            }
+
+            let historyHTML = `
+                <div style="text-align: left; margin-bottom: 20px;">
+                    <h3>📜 Backup History (Latest ${backups.length} backups)</h3>
+                    <p>नोट: सबसे नया backup सबसे ऊपर है</p>
+                </div>
+            `;
+
+            // Show backups in reverse order (newest first)
+            backups.slice().reverse().forEach((backup, index) => {
+                const actualIndex = backups.length - 1 - index;
+                historyHTML += `
+                    <div class="backup-item">
+                        <div>
+                            <strong>🕒 ${backup.displayTime}</strong><br>
+                            <small>
+                                📋 ${backup.recordCount} रिकॉर्ड्स | 
+                                👥 ${backup.raiyatCount} रैयत |
+                                💾 ${new Date(backup.timestamp).toLocaleDateString('hi-IN')}
+                            </small>
+                        </div>
+                        <div>
+                            <button class="submit-btn" onclick="restoreFromBackup(${actualIndex})" style="margin: 5px;">
+                                <span class="icon">🔄</span> Restore
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Create popup for backup history
+            const popupHTML = `
+                <div class="popup-overlay" id="backupHistoryPopup" style="display: flex;">
+                    <div class="popup-content">
+                        <div class="popup-icon">📜</div>
+                        <div class="popup-title">Backup History</div>
+                        <div class="popup-message">
+                            नीचे available backups की लिस्ट है। किसी भी backup को restore कर सकते हैं।
+                        </div>
+                        
+                        <div style="max-height: 400px; overflow-y: auto; margin: 20px 0;">
+                            ${historyHTML}
+                        </div>
+                        
+                        <div class="share-options">
+                            <button class="delete-btn" onclick="closeBackupHistory()">
+                                <span class="icon">✖️</span> बंद करें
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Add to page
+            document.body.insertAdjacentHTML('beforeend', popupHTML);
+        }
+
+        function closeBackupHistory() {
+            const popup = document.getElementById('backupHistoryPopup');
+            if (popup) popup.remove();
+        }
+
+        function restoreFromBackup(backupIndex) {
+            const backups = getBackupHistory();
+            const backup = backups[backupIndex];
+            
+            if (!backup) {
+                showStatus('Backup नहीं मिला', 'error');
+                return;
+            }
+
+            // Create confirmation popup
+            const confirmHTML = `
+                <div class="popup-overlay" id="restoreConfirmPopup" style="display: flex;">
+                    <div class="popup-content">
+                        <div class="popup-icon">⚠️</div>
+                        <div class="popup-title">Restore Confirm</div>
+                        <div class="popup-message">
+                            <strong>क्या आप वाकई इस backup से data restore करना चाहते हैं?</strong><br><br>
+                            
+                            <div style="text-align: left; background: #fff3cd; padding: 15px; border-radius: 8px;">
+                                <strong>Backup Details:</strong><br>
+                                📅 ${backup.displayTime}<br>
+                                📋 ${backup.recordCount} रिकॉर्ड्स<br>
+                                👥 ${backup.raiyatCount} रैयत<br>
+                            </div>
+                            
+                            <br><strong>Warning:</strong> Current data replace हो जाएगा!
+                        </div>
+                        
+                        <div class="share-options">
+                            <button class="submit-btn" onclick="executeRestore(${backupIndex})">
+                                <span class="icon">✅</span> हाँ, Restore करें
+                            </button>
+                            <button class="delete-btn" onclick="closeRestoreConfirm()">
+                                <span class="icon">❌</span> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', confirmHTML);
+        }
+
+        function executeRestore(backupIndex) {
+            const backups = getBackupHistory();
+            const backup = backups[backupIndex];
+            
+            if (!backup) {
+                showStatus('Backup नहीं मिला', 'error');
+                return;
+            }
+
+            try {
+                // Create backup of current data before restore (safety measure)
+                const currentBackup = {
+                    raiyatNames: JSON.parse(localStorage.getItem(STORAGE_KEYS.RAIYAT_NAMES) || '[]'),
+                    landRecords: JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]'),
+                    timestamp: new Date().toISOString(),
+                    displayTime: new Date().toLocaleString('hi-IN')
+                };
+
+                // Save current data as emergency backup
+                const emergencyBackups = JSON.parse(localStorage.getItem('emergency_backups') || '[]');
+                emergencyBackups.push(currentBackup);
+                if (emergencyBackups.length > 3) emergencyBackups.shift();
+                localStorage.setItem('emergency_backups', JSON.stringify(emergencyBackups));
+
+                // Restore from selected backup
+                localStorage.setItem(STORAGE_KEYS.RAIYAT_NAMES, JSON.stringify(backup.raiyatNames));
+                localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify(backup.landRecords));
+
+                // Reload all data
+                loadRaiyatNames();
+                loadRecordsTable();
+                updateDashboard();
+                updateRakwaChart();
+
+                // Close popups
+                closeRestoreConfirm();
+                closeBackupHistory();
+
+                showStatus(`✅ Backup से डेटा restore किया गया (${backup.displayTime})`, 'success');
+
+                // Log restore action
+                console.log(`Restored from backup: ${backup.displayTime}`);
+
+            } catch (error) {
+                showStatus('❌ Restore में error आई: ' + error.message, 'error');
+                console.error('Restore error:', error);
+            }
+        }
+
+        function closeRestoreConfirm() {
+            const popup = document.getElementById('restoreConfirmPopup');
+            if (popup) popup.remove();
+        }
+
+        function showEmergencyRecovery() {
+            const emergencyBackups = JSON.parse(localStorage.getItem('emergency_backups') || '[]');
+            
+            if (emergencyBackups.length === 0) {
+                showStatus('कोई emergency backup उपलब्ध नहीं है', 'warning');
+                return;
+            }
+
+            let recoveryHTML = `
+                <div style="text-align: left; margin-bottom: 20px;">
+                    <h3>🚨 Emergency Recovery</h3>
+                    <p style="color: #e74c3c;">इसका उपयोग केवल restore fail होने पर करें</p>
+                </div>
+            `;
+
+            emergencyBackups.slice().reverse().forEach((backup, index) => {
+                const actualIndex = emergencyBackups.length - 1 - index;
+                recoveryHTML += `
+                    <div class="backup-item" style="border-color: #e74c3c; background: #fdf2f2;">
+                        <div>
+                            <strong>🚨 ${backup.displayTime}</strong><br>
+                            <small>Emergency Backup (Pre-restore)</small>
+                        </div>
+                        <button class="delete-btn" onclick="restoreEmergencyBackup(${actualIndex})" style="margin: 5px;">
+                            <span class="icon">🔄</span> Emergency Restore
+                        </button>
+                    </div>
+                `;
+            });
+
+            // Show in popup
+            const popupHTML = `
+                <div class="popup-overlay" id="emergencyRecoveryPopup" style="display: flex;">
+                    <div class="popup-content">
+                        ${recoveryHTML}
+                        <div class="share-options">
+                            <button class="delete-btn" onclick="closeEmergencyRecovery()">
+                                <span class="icon">✖️</span> बंद करें
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', popupHTML);
+        }
+
+        function restoreEmergencyBackup(backupIndex) {
+            const emergencyBackups = JSON.parse(localStorage.getItem('emergency_backups') || '[]');
+            const backup = emergencyBackups[backupIndex];
+            
+            if (backup) {
+                localStorage.setItem(STORAGE_KEYS.RAIYAT_NAMES, JSON.stringify(backup.raiyatNames));
+                localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify(backup.landRecords));
+                
+                // Reload data
+                loadRaiyatNames();
+                loadRecordsTable();
+                updateDashboard();
+                updateRakwaChart();
+                
+                showStatus(`Emergency backup से डेटा रीस्टोर किया गया`, 'success');
+                closeEmergencyRecovery();
+            }
+        }
+
+        function closeEmergencyRecovery() {
+            const popup = document.getElementById('emergencyRecoveryPopup');
+            if (popup) popup.remove();
         }
 
         // Update dashboard statistics
         function updateDashboard() {
             const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]');
-            const raiyatNames = JSON.parse(localStorage.getItem(STORAGE_KEYS.RAIYAT_NAMES) || '[]');
             
             // Calculate statistics
             const totalRecords = records.length;
@@ -1040,41 +1748,6 @@
             }
         }
 
-        // Show all raiyat names
-        function showAllRaiyatNames() {
-            const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]');
-            const raiyatNames = JSON.parse(localStorage.getItem(STORAGE_KEYS.RAIYAT_NAMES) || '[]');
-            
-            // Get raiyat names with record counts
-            const raiyatWithCounts = raiyatNames.map(raiyat => {
-                const count = records.filter(record => record.raiyatName === raiyat.name).length;
-                return {
-                    name: raiyat.name,
-                    count: count
-                };
-            }).filter(raiyat => raiyat.count > 0);
-            
-            const container = document.getElementById('raiyatNamesList');
-            container.innerHTML = '';
-            
-            if (raiyatWithCounts.length === 0) {
-                container.innerHTML = '<p style="text-align: center; width: 100%;">कोई रैयत नहीं मिला</p>';
-            } else {
-                raiyatWithCounts.forEach(raiyat => {
-                    const card = document.createElement('div');
-                    card.className = 'raiyat-name-card';
-                    card.innerHTML = `
-                        <div class="raiyat-name">${raiyat.name}</div>
-                        <div class="raiyat-record-count">${raiyat.count} रिकॉर्ड्स</div>
-                    `;
-                    card.onclick = () => filterByRaiyat(raiyat.name);
-                    container.appendChild(card);
-                });
-            }
-            
-            document.getElementById('raiyatNamesContainer').style.display = 'block';
-        }
-
         // Show all records
         function showAllRecords() {
             currentRaiyatFilter = null;
@@ -1101,7 +1774,13 @@
             // Update dashboard when switching to records tab
             if (tabName === 'records') {
                 updateDashboard();
+                updateRakwaChart();
                 document.getElementById('raiyatNamesContainer').style.display = 'none';
+            }
+            
+            // Update backup status when switching to admin tab
+            if (tabName === 'admin') {
+                updateBackupStatusDisplay();
             }
         }
 
@@ -1151,12 +1830,19 @@
             const raiyatNames = JSON.parse(localStorage.getItem(STORAGE_KEYS.RAIYAT_NAMES) || '[]');
             const newId = Date.now().toString();
             
+            // Check if name already exists
+            if (raiyatNames.some(raiyat => raiyat.name === name)) {
+                showStatus('यह रैयत नाम पहले से मौजूद है', 'error');
+                return;
+            }
+            
             raiyatNames.push({ id: newId, name: name });
             localStorage.setItem(STORAGE_KEYS.RAIYAT_NAMES, JSON.stringify(raiyatNames));
             
             nameInput.value = '';
             loadRaiyatNames();
             updateDashboard();
+            updateRakwaChart();
             showStatus('रैयत नाम सफलतापूर्वक जोड़ा गया', 'success');
         }
 
@@ -1168,6 +1854,7 @@
             localStorage.setItem(STORAGE_KEYS.RAIYAT_NAMES, JSON.stringify(updatedNames));
             loadRaiyatNames();
             updateDashboard();
+            updateRakwaChart();
             showStatus('रैयत नाम डिलीट किया गया', 'success');
         }
 
@@ -1182,11 +1869,18 @@
             }
 
             const selectedRaiyat = document.getElementById('raiyatName');
+            const raiyatName = selectedRaiyat.options[selectedRaiyat.selectedIndex]?.text;
+            
+            if (!raiyatName || raiyatName === '-- चुनें --') {
+                showStatus('कृपया रैयत नाम चुनें', 'error');
+                return;
+            }
+
             const record = {
                 id: Date.now().toString(),
                 timestamp: new Date().toLocaleString('hi-IN'),
                 raiyatId: selectedRaiyat.value,
-                raiyatName: selectedRaiyat.options[selectedRaiyat.selectedIndex]?.text || '',
+                raiyatName: raiyatName,
                 jamabandiNumber: document.getElementById('jamabandiNumber').value,
                 khataNumber: document.getElementById('khataNumber').value,
                 khesraNumber: khesraNumber,
@@ -1205,6 +1899,7 @@
 
             showSuccessPopup();
             updateDashboard();
+            updateRakwaChart();
             showStatus('रिकॉर्ड सफलतापूर्वक सेव हो गया', 'success');
         });
 
@@ -1245,11 +1940,12 @@
                 : records;
 
             filteredRecords.forEach((record, index) => {
+                const raiyatColor = getRaiyatColor(record.raiyatName);
                 tableHTML += `
                     <tr>
                         <td>${index + 1}</td>
                         <td>
-                            <span style="cursor: pointer; color: #3498db; font-weight: 600;" 
+                            <span style="cursor: pointer; color: ${raiyatColor}; font-weight: 600;" 
                                   onclick="filterByRaiyat('${record.raiyatName}')"
                                   title="इस रैयत के रिकॉर्ड्स देखें">
                                 ${record.raiyatName}
@@ -1390,10 +2086,17 @@
             }
 
             const selectedRaiyat = document.getElementById('editRaiyatName');
+            const raiyatName = selectedRaiyat.options[selectedRaiyat.selectedIndex]?.text;
+            
+            if (!raiyatName || raiyatName === '-- चुनें --') {
+                showStatus('कृपया रैयत नाम चुनें', 'error');
+                return;
+            }
+
             const updatedRecord = {
                 ...currentRecordToEdit,
                 raiyatId: selectedRaiyat.value,
-                raiyatName: selectedRaiyat.options[selectedRaiyat.selectedIndex]?.text || '',
+                raiyatName: raiyatName,
                 jamabandiNumber: document.getElementById('editJamabandiNumber').value,
                 khataNumber: document.getElementById('editKhataNumber').value,
                 khesraNumber: khesraNumber,
@@ -1415,6 +2118,7 @@
             localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify(updatedRecords));
             loadRecordsTable();
             updateDashboard();
+            updateRakwaChart();
             
             showStatus('रिकॉर्ड सफलतापूर्वक अपडेट हो गया', 'success');
             closeEditPopup();
@@ -1524,6 +2228,7 @@
                     localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify(existingRecords));
                     loadRecordsTable();
                     updateDashboard();
+                    updateRakwaChart();
                     
                     showStatus(`${importedCount} रिकॉर्ड्स सफलतापूर्वक इम्पोर्ट हो गए`, 'success');
                     closeImportPopup();
@@ -1550,6 +2255,7 @@
                 localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify(updatedRecords));
                 loadRecordsTable();
                 updateDashboard();
+                updateRakwaChart();
                 showStatus('रिकॉर्ड डिलीट किया गया', 'success');
             }
         }
@@ -1560,6 +2266,7 @@
                 localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify([]));
                 loadRecordsTable();
                 updateDashboard();
+                updateRakwaChart();
                 showStatus('सभी रिकॉर्ड्स डिलीट किए गए', 'success');
             }
         }
@@ -1621,7 +2328,8 @@
         function backupData() {
             const data = {
                 raiyatNames: JSON.parse(localStorage.getItem(STORAGE_KEYS.RAIYAT_NAMES) || '[]'),
-                landRecords: JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]')
+                landRecords: JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]'),
+                raiyatColors: JSON.parse(localStorage.getItem(STORAGE_KEYS.RAIYAT_COLORS) || '{}')
             };
 
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -1656,9 +2364,14 @@
                         localStorage.setItem(STORAGE_KEYS.RAIYAT_NAMES, JSON.stringify(data.raiyatNames));
                         localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify(data.landRecords));
                         
+                        if (data.raiyatColors) {
+                            localStorage.setItem(STORAGE_KEYS.RAIYAT_COLORS, JSON.stringify(data.raiyatColors));
+                        }
+                        
                         loadRaiyatNames();
                         loadRecordsTable();
                         updateDashboard();
+                        updateRakwaChart();
                         showStatus('डेटा सफलतापूर्वक रीस्टोर हो गया', 'success');
                     } else {
                         showStatus('अमान्य बैकअप फाइल', 'error');
