@@ -19,7 +19,7 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background-color: white;
             padding: 30px;
@@ -64,6 +64,124 @@
         
         .tab-content.active {
             display: block;
+        }
+        
+        /* Summary Dashboard Styles */
+        .summary-dashboard {
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-title {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 25px;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .stat-card:hover::before {
+            left: 100%;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .stat-card:nth-child(2) {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+        
+        .stat-card:nth-child(3) {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+        
+        .stat-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 600;
+        }
+        
+        .raiyat-summary {
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+            padding: 20px;
+            border-radius: 15px;
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        .raiyat-summary h3 {
+            margin: 0 0 15px 0;
+            font-size: 20px;
+            text-align: center;
+        }
+        
+        .raiyat-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .raiyat-stat {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .raiyat-stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .raiyat-stat-label {
+            font-size: 14px;
+            opacity: 0.9;
         }
         
         .form-section {
@@ -313,7 +431,7 @@
             padding: 30px;
             border-radius: 15px;
             text-align: center;
-            max-width: 600px;
+            max-width: 800px;
             width: 90%;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             max-height: 90vh;
@@ -404,7 +522,47 @@
             color: #555;
         }
         
-        @media (max-width: 768px) {
+        .raiyat-names-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .raiyat-name-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .raiyat-name-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .raiyat-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .raiyat-record-count {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .icon {
+            display: inline-block;
+            width: 20px;
+            text-align: center;
+            margin-right: 8px;
+        }
+        
+        @media (max-width: 1200px) {
             .container {
                 padding: 20px;
             }
@@ -414,35 +572,36 @@
             }
             
             .btn-group {
-                flex-direction: column;
+                flex-direction: row;
             }
             
             button {
-                width: 100%;
+                width: auto;
             }
             
             .admin-form {
-                flex-direction: column;
+                flex-direction: row;
             }
             
             .action-buttons {
-                flex-direction: column;
+                flex-direction: row;
             }
             
             .share-options {
-                flex-direction: column;
+                flex-direction: row;
             }
             
             .detail-label {
                 width: 120px;
             }
-        }
-        
-        .icon {
-            display: inline-block;
-            width: 20px;
-            text-align: center;
-            margin-right: 8px;
+            
+            .stats-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .raiyat-stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
     </style>
 </head>
@@ -560,6 +719,52 @@
         <div id="records-tab" class="tab-content">
             <h1>📊 सभी रिकॉर्ड्स</h1>
             
+            <!-- Summary Dashboard -->
+            <div class="summary-dashboard">
+                <div class="dashboard-title">📈 कुल सारांश</div>
+                
+                <div class="stats-cards">
+                    <div class="stat-card" onclick="showAllRaiyatNames()">
+                        <span class="stat-icon">👥</span>
+                        <span class="stat-number" id="totalRaiyat">0</span>
+                        <span class="stat-label">कुल रैयत</span>
+                    </div>
+                    
+                    <div class="stat-card" onclick="showAllRecords()">
+                        <span class="stat-icon">📋</span>
+                        <span class="stat-number" id="totalRecords">0</span>
+                        <span class="stat-label">कुल रिकॉर्ड्स</span>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <span class="stat-icon">📏</span>
+                        <span class="stat-number" id="totalArea">0</span>
+                        <span class="stat-label">कुल रकवा (डिसमिल)</span>
+                    </div>
+                </div>
+                
+                <div class="raiyat-summary" id="raiyatSummary" style="display: none;">
+                    <h3>👤 रैयत सारांश - <span id="selectedRaiyatName"></span></h3>
+                    <div class="raiyat-stats">
+                        <div class="raiyat-stat">
+                            <div class="raiyat-stat-number" id="raiyatRecords">0</div>
+                            <div class="raiyat-stat-label">रिकॉर्ड्स</div>
+                        </div>
+                        <div class="raiyat-stat">
+                            <div class="raiyat-stat-number" id="raiyatArea">0</div>
+                            <div class="raiyat-stat-label">कुल रकवा</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="raiyatNamesContainer" style="display: none;">
+                    <h3 style="text-align: center; margin-bottom: 20px;">सभी रैयत</h3>
+                    <div class="raiyat-names-container" id="raiyatNamesList">
+                        <!-- रैयत नाम यहाँ लोड होंगे -->
+                    </div>
+                </div>
+            </div>
+            
             <div class="btn-group">
                 <button class="export-btn" onclick="exportToExcel()">
                     <span class="icon">📥</span> Excel Export
@@ -628,36 +833,6 @@
             <button class="submit-btn" onclick="closePopupAndReset()">
                 <span class="icon">👍</span> ठीक है
             </button>
-        </div>
-    </div>
-
-    <!-- शेयर पॉपअप -->
-    <div id="sharePopup" class="popup-overlay">
-        <div class="popup-content">
-            <div class="popup-icon">📤</div>
-            <div class="popup-title">रिकॉर्ड शेयर करें</div>
-            <div class="popup-message">
-                इस रिकॉर्ड को शेयर करने के लिए नीचे दिए गए विकल्प चुनें:
-            </div>
-            
-            <div class="record-details" id="shareContent">
-                <!-- रिकॉर्ड डिटेल्स यहाँ लोड होंगी -->
-            </div>
-            
-            <div class="share-options">
-                <button class="whatsapp-btn" onclick="shareOnWhatsApp()">
-                    <span class="icon">📱</span> WhatsApp
-                </button>
-                <button class="share-btn" onclick="copyToClipboard()">
-                    <span class="icon">📋</span> कॉपी करें
-                </button>
-                <button class="export-btn" onclick="downloadAsText()">
-                    <span class="icon">📄</span> टेक्स्ट फाइल
-                </button>
-                <button class="delete-btn" onclick="closeSharePopup()">
-                    <span class="icon">✖️</span> बंद करें
-                </button>
-            </div>
         </div>
     </div>
 
@@ -806,6 +981,7 @@
 
         let currentRecordToShare = null;
         let currentRecordToEdit = null;
+        let currentRaiyatFilter = null;
 
         // Initialize data
         function initializeData() {
@@ -828,6 +1004,84 @@
 
             loadRaiyatNames();
             loadRecordsTable();
+            updateDashboard();
+        }
+
+        // Update dashboard statistics
+        function updateDashboard() {
+            const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]');
+            const raiyatNames = JSON.parse(localStorage.getItem(STORAGE_KEYS.RAIYAT_NAMES) || '[]');
+            
+            // Calculate statistics
+            const totalRecords = records.length;
+            const totalArea = records.reduce((sum, record) => sum + (parseFloat(record.rakwa) || 0), 0);
+            
+            // Get unique raiyat count
+            const uniqueRaiyat = new Set(records.map(record => record.raiyatName).filter(name => name));
+            const totalRaiyat = uniqueRaiyat.size;
+            
+            // Update dashboard
+            document.getElementById('totalRaiyat').textContent = totalRaiyat;
+            document.getElementById('totalRecords').textContent = totalRecords;
+            document.getElementById('totalArea').textContent = totalArea.toFixed(2);
+            
+            // Update raiyat summary if filtered
+            if (currentRaiyatFilter) {
+                const raiyatRecords = records.filter(record => record.raiyatName === currentRaiyatFilter);
+                const raiyatTotalArea = raiyatRecords.reduce((sum, record) => sum + (parseFloat(record.rakwa) || 0), 0);
+                
+                document.getElementById('selectedRaiyatName').textContent = currentRaiyatFilter;
+                document.getElementById('raiyatRecords').textContent = raiyatRecords.length;
+                document.getElementById('raiyatArea').textContent = raiyatTotalArea.toFixed(2);
+                
+                document.getElementById('raiyatSummary').style.display = 'block';
+            } else {
+                document.getElementById('raiyatSummary').style.display = 'none';
+            }
+        }
+
+        // Show all raiyat names
+        function showAllRaiyatNames() {
+            const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]');
+            const raiyatNames = JSON.parse(localStorage.getItem(STORAGE_KEYS.RAIYAT_NAMES) || '[]');
+            
+            // Get raiyat names with record counts
+            const raiyatWithCounts = raiyatNames.map(raiyat => {
+                const count = records.filter(record => record.raiyatName === raiyat.name).length;
+                return {
+                    name: raiyat.name,
+                    count: count
+                };
+            }).filter(raiyat => raiyat.count > 0);
+            
+            const container = document.getElementById('raiyatNamesList');
+            container.innerHTML = '';
+            
+            if (raiyatWithCounts.length === 0) {
+                container.innerHTML = '<p style="text-align: center; width: 100%;">कोई रैयत नहीं मिला</p>';
+            } else {
+                raiyatWithCounts.forEach(raiyat => {
+                    const card = document.createElement('div');
+                    card.className = 'raiyat-name-card';
+                    card.innerHTML = `
+                        <div class="raiyat-name">${raiyat.name}</div>
+                        <div class="raiyat-record-count">${raiyat.count} रिकॉर्ड्स</div>
+                    `;
+                    card.onclick = () => filterByRaiyat(raiyat.name);
+                    container.appendChild(card);
+                });
+            }
+            
+            document.getElementById('raiyatNamesContainer').style.display = 'block';
+        }
+
+        // Show all records
+        function showAllRecords() {
+            currentRaiyatFilter = null;
+            document.getElementById('raiyatNamesContainer').style.display = 'none';
+            updateDashboard();
+            loadRecordsTable();
+            showStatus('सभी रिकॉर्ड्स दिखाए जा रहे हैं', 'success');
         }
 
         // Tab switching
@@ -843,6 +1097,12 @@
             // Show selected tab
             document.getElementById(`${tabName}-tab`).classList.add('active');
             event.target.classList.add('active');
+            
+            // Update dashboard when switching to records tab
+            if (tabName === 'records') {
+                updateDashboard();
+                document.getElementById('raiyatNamesContainer').style.display = 'none';
+            }
         }
 
         // Load raiyat names in dropdown
@@ -896,6 +1156,7 @@
             
             nameInput.value = '';
             loadRaiyatNames();
+            updateDashboard();
             showStatus('रैयत नाम सफलतापूर्वक जोड़ा गया', 'success');
         }
 
@@ -906,6 +1167,7 @@
             
             localStorage.setItem(STORAGE_KEYS.RAIYAT_NAMES, JSON.stringify(updatedNames));
             loadRaiyatNames();
+            updateDashboard();
             showStatus('रैयत नाम डिलीट किया गया', 'success');
         }
 
@@ -942,6 +1204,7 @@
             localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify(records));
 
             showSuccessPopup();
+            updateDashboard();
             showStatus('रिकॉर्ड सफलतापूर्वक सेव हो गया', 'success');
         });
 
@@ -960,35 +1223,51 @@
                     <thead>
                         <tr>
                             <th>क्र.</th>
-                            <th>तारीख</th>
                             <th>रैयत नाम</th>
                             <th>खेसरा नंबर</th>
                             <th>जमाबंदी नंबर</th>
                             <th>खाता नंबर</th>
                             <th>रकवा</th>
+                            <th>उत्तर</th>
+                            <th>दक्षिण</th>
+                            <th>पूर्व</th>
+                            <th>पश्चिम</th>
+                            <th>रिमार्क्स</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
             `;
 
-            records.forEach((record, index) => {
+            // Filter records if raiyat filter is applied
+            const filteredRecords = currentRaiyatFilter 
+                ? records.filter(record => record.raiyatName === currentRaiyatFilter)
+                : records;
+
+            filteredRecords.forEach((record, index) => {
                 tableHTML += `
                     <tr>
                         <td>${index + 1}</td>
-                        <td>${record.timestamp}</td>
-                        <td>${record.raiyatName}</td>
+                        <td>
+                            <span style="cursor: pointer; color: #3498db; font-weight: 600;" 
+                                  onclick="filterByRaiyat('${record.raiyatName}')"
+                                  title="इस रैयत के रिकॉर्ड्स देखें">
+                                ${record.raiyatName}
+                            </span>
+                        </td>
                         <td>${record.khesraNumber}</td>
                         <td>${record.jamabandiNumber || '-'}</td>
                         <td>${record.khataNumber || '-'}</td>
                         <td>${record.rakwa || '-'}</td>
+                        <td>${record.uttar || '-'}</td>
+                        <td>${record.dakshin || '-'}</td>
+                        <td>${record.purab || '-'}</td>
+                        <td>${record.paschim || '-'}</td>
+                        <td>${record.remarks || '-'}</td>
                         <td>
                             <div class="action-buttons">
                                 <button class="edit-btn" onclick="showRecordDetails('${record.id}')" title="डिटेल्स देखें">
                                     <span class="icon">👁️</span>
-                                </button>
-                                <button class="share-btn" onclick="shareRecord('${record.id}')" title="शेयर करें">
-                                    <span class="icon">📤</span>
                                 </button>
                                 <button class="delete-btn" onclick="deleteRecord('${record.id}')" title="डिलीट करें">
                                     <span class="icon">🗑️</span>
@@ -1001,6 +1280,23 @@
 
             tableHTML += '</tbody></table>';
             container.innerHTML = tableHTML;
+        }
+
+        // Filter by raiyat
+        function filterByRaiyat(raiyatName) {
+            currentRaiyatFilter = raiyatName;
+            document.getElementById('raiyatNamesContainer').style.display = 'none';
+            updateDashboard();
+            loadRecordsTable();
+            showStatus(`${raiyatName} के रिकॉर्ड्स फिल्टर किए गए`, 'success');
+        }
+
+        // Clear filter
+        function clearFilter() {
+            currentRaiyatFilter = null;
+            updateDashboard();
+            loadRecordsTable();
+            showStatus('फिल्टर हटा दिया गया', 'success');
         }
 
         // Show record details
@@ -1058,63 +1354,6 @@
 
             document.getElementById('detailsContent').innerHTML = detailsContent;
             document.getElementById('detailsPopup').style.display = 'flex';
-        }
-
-        // Share record function
-        function shareRecord(id) {
-            const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.LAND_RECORDS) || '[]');
-            const record = records.find(r => r.id === id);
-            
-            if (!record) {
-                showStatus('रिकॉर्ड नहीं मिला', 'error');
-                return;
-            }
-
-            currentRecordToShare = record;
-            
-            // Create share content
-            const shareContent = `
-                <div class="detail-item">
-                    <span class="detail-label">📅 तारीख:</span>
-                    <span class="detail-value">${record.timestamp}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">👤 रैयत नाम:</span>
-                    <span class="detail-value">${record.raiyatName}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">🔢 जमाबंदी नंबर:</span>
-                    <span class="detail-value">${record.jamabandiNumber || 'नहीं दिया'}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">📋 खाता नंबर:</span>
-                    <span class="detail-value">${record.khataNumber || 'नहीं दिया'}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">🏷️ खेसरा नंबर:</span>
-                    <span class="detail-value">${record.khesraNumber}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">📏 रकवा:</span>
-                    <span class="detail-value">${record.rakwa || 'नहीं दिया'} डिसमिल</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">🗺️ चौहद्दी:</span>
-                    <span class="detail-value">
-                        <div>• उत्तर: ${record.uttar || 'नहीं दिया'}</div>
-                        <div>• दक्षिण: ${record.dakshin || 'नहीं दिया'}</div>
-                        <div>• पूर्व: ${record.purab || 'नहीं दिया'}</div>
-                        <div>• पश्चिम: ${record.paschim || 'नहीं दिया'}</div>
-                    </span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">💬 रिमार्क्स:</span>
-                    <span class="detail-value">${record.remarks || 'नहीं दिया'}</span>
-                </div>
-            `;
-
-            document.getElementById('shareContent').innerHTML = shareContent;
-            document.getElementById('sharePopup').style.display = 'flex';
         }
 
         // Edit record
@@ -1175,6 +1414,7 @@
             
             localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify(updatedRecords));
             loadRecordsTable();
+            updateDashboard();
             
             showStatus('रिकॉर्ड सफलतापूर्वक अपडेट हो गया', 'success');
             closeEditPopup();
@@ -1210,92 +1450,7 @@
             showStatus('WhatsApp में शेयर करने के लिए तैयार', 'success');
         }
 
-        // Copy to clipboard
-        function copyToClipboard() {
-            if (!currentRecordToShare) return;
-
-            const text = `
-भू-अभिलेख रिकॉर्ड
-===================
-
-तारीख: ${currentRecordToShare.timestamp}
-रैयत नाम: ${currentRecordToShare.raiyatName}
-जमाबंदी नंबर: ${currentRecordToShare.jamabandiNumber || 'नहीं दिया'}
-खाता नंबर: ${currentRecordToShare.khataNumber || 'नहीं दिया'}
-खेसरा नंबर: ${currentRecordToShare.khesraNumber}
-रकवा: ${currentRecordToShare.rakwa || 'नहीं दिया'} डिसमिल
-
-चौहद्दी:
-- उत्तर: ${currentRecordToShare.uttar || 'नहीं दिया'}
-- दक्षिण: ${currentRecordToShare.dakshin || 'नहीं दिया'}
-- पूर्व: ${currentRecordToShare.purab || 'नहीं दिया'}
-- पश्चिम: ${currentRecordToShare.paschim || 'नहीं दिया'}
-
-रिमार्क्स: ${currentRecordToShare.remarks || 'नहीं दिया'}
-            `.trim();
-            
-            navigator.clipboard.writeText(text).then(() => {
-                showStatus('रिकॉर्ड क्लिपबोर्ड में कॉपी हो गया', 'success');
-            }).catch(() => {
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showStatus('रिकॉर्ड क्लिपबोर्ड में कॉपी हो गया', 'success');
-            });
-        }
-
-        // Download as text file
-        function downloadAsText() {
-            if (!currentRecordToShare) return;
-
-            const content = `
-भू-अभिलेख रिकॉर्ड
-===================
-
-तारीख: ${currentRecordToShare.timestamp}
-रैयत नाम: ${currentRecordToShare.raiyatName}
-जमाबंदी नंबर: ${currentRecordToShare.jamabandiNumber || 'नहीं दिया'}
-खाता नंबर: ${currentRecordToShare.khataNumber || 'नहीं दिया'}
-खेसरा नंबर: ${currentRecordToShare.khesraNumber}
-रकवा: ${currentRecordToShare.rakwa || 'नहीं दिया'} डिसमिल
-
-चौहद्दी:
-- उत्तर: ${currentRecordToShare.uttar || 'नहीं दिया'}
-- दक्षिण: ${currentRecordToShare.dakshin || 'नहीं दिया'}
-- पूर्व: ${currentRecordToShare.purab || 'नहीं दिया'}
-- पश्चिम: ${currentRecordToShare.paschim || 'नहीं दिया'}
-
-रिमार्क्स: ${currentRecordToShare.remarks || 'नहीं दिया'}
-
-===================
-जनरेट किया गया: ${new Date().toLocaleString('hi-IN')}
-            `.trim();
-
-            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            
-            link.setAttribute('href', url);
-            link.setAttribute('download', `भू-अभिलेख_${currentRecordToShare.raiyatName}_${currentRecordToShare.khesraNumber}.txt`);
-            link.style.visibility = 'hidden';
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showStatus('टेक्स्ट फाइल डाउनलोड हो गई', 'success');
-        }
-
         // Close popups
-        function closeSharePopup() {
-            document.getElementById('sharePopup').style.display = 'none';
-            currentRecordToShare = null;
-        }
-
         function closeDetailsPopup() {
             document.getElementById('detailsPopup').style.display = 'none';
             currentRecordToShare = null;
@@ -1368,6 +1523,7 @@
 
                     localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify(existingRecords));
                     loadRecordsTable();
+                    updateDashboard();
                     
                     showStatus(`${importedCount} रिकॉर्ड्स सफलतापूर्वक इम्पोर्ट हो गए`, 'success');
                     closeImportPopup();
@@ -1393,6 +1549,7 @@
                 
                 localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify(updatedRecords));
                 loadRecordsTable();
+                updateDashboard();
                 showStatus('रिकॉर्ड डिलीट किया गया', 'success');
             }
         }
@@ -1402,6 +1559,7 @@
             if (confirm('क्या आप वाकई सभी रिकॉर्ड्स डिलीट करना चाहते हैं? यह एक्शन undo नहीं हो सकता।')) {
                 localStorage.setItem(STORAGE_KEYS.LAND_RECORDS, JSON.stringify([]));
                 loadRecordsTable();
+                updateDashboard();
                 showStatus('सभी रिकॉर्ड्स डिलीट किए गए', 'success');
             }
         }
@@ -1415,12 +1573,16 @@
                 return;
             }
 
+            // Filter records if raiyat filter is applied
+            const filteredRecords = currentRaiyatFilter 
+                ? records.filter(record => record.raiyatName === currentRaiyatFilter)
+                : records;
+
             // Create CSV content
-            let csvContent = "तारीख,रैयत नाम,जमाबंदी नंबर,खाता नंबर,खेसरा नंबर,रकवा,उत्तर,दक्षिण,पूर्व,पश्चिम,रिमार्क्स\n";
+            let csvContent = "रैयत नाम,जमाबंदी नंबर,खाता नंबर,खेसरा नंबर,रकवा,उत्तर,दक्षिण,पूर्व,पश्चिम,रिमार्क्स\n";
             
-            records.forEach(record => {
+            filteredRecords.forEach(record => {
                 const row = [
-                    `"${record.timestamp}"`,
                     `"${record.raiyatName}"`,
                     `"${record.jamabandiNumber || ''}"`,
                     `"${record.khataNumber || ''}"`,
@@ -1440,8 +1602,12 @@
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             
+            const fileName = currentRaiyatFilter 
+                ? `भू-अभिलेख_${currentRaiyatFilter}_${new Date().toISOString().split('T')[0]}.csv`
+                : `भू-अभिलेख_सभी_रिकॉर्ड्स_${new Date().toISOString().split('T')[0]}.csv`;
+            
             link.setAttribute('href', url);
-            link.setAttribute('download', `भू-अभिलेख_रिकॉर्ड्स_${new Date().toISOString().split('T')[0]}.csv`);
+            link.setAttribute('download', fileName);
             link.style.visibility = 'hidden';
             
             document.body.appendChild(link);
@@ -1492,6 +1658,7 @@
                         
                         loadRaiyatNames();
                         loadRecordsTable();
+                        updateDashboard();
                         showStatus('डेटा सफलतापूर्वक रीस्टोर हो गया', 'success');
                     } else {
                         showStatus('अमान्य बैकअप फाइल', 'error');
